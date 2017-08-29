@@ -42,6 +42,7 @@ System.register("VirtualElement", [], function (exports_1, context_1) {
                     this.elementTag = elementTag;
                     this.attributes = attributes;
                     this.children = children;
+                    this.element = null;
                 }
                 return VirtualElement;
             }());
@@ -113,48 +114,9 @@ System.register("FullRenderer", ["VirtualElement"], function (exports_2, context
         }
     };
 });
-System.register("StateManager", [], function (exports_3, context_3) {
+System.register("main", ["VirtualElement", "FullRenderer"], function (exports_3, context_3) {
     "use strict";
     var __moduleName = context_3 && context_3.id;
-    var RelationalStateManager, StateNode;
-    return {
-        setters: [],
-        execute: function () {
-            RelationalStateManager = (function () {
-                function RelationalStateManager() {
-                    this.boundItem = {};
-                }
-                RelationalStateManager.prototype.SetProperty = function (type, id, object) {
-                    this.boundItem[type] = this.boundItem[type] || {};
-                    this.boundItem[type][id] = object;
-                };
-                RelationalStateManager.prototype.GetProperty = function (type, id) {
-                    if (this.boundItem[type] && this.boundItem[type][id]) {
-                        return this.boundItem[type][id];
-                    }
-                    return null;
-                };
-                RelationalStateManager.prototype.RemoveProperty = function (type, id) {
-                };
-                RelationalStateManager.prototype.GetChildren = function (childType, parentType, parentId) {
-                };
-                RelationalStateManager.prototype.DefineStructure = function (childType, parentType, parentIdProperty, childSortingProperty) {
-                };
-                return RelationalStateManager;
-            }());
-            exports_3("RelationalStateManager", RelationalStateManager);
-            StateNode = (function () {
-                function StateNode() {
-                }
-                return StateNode;
-            }());
-            exports_3("StateNode", StateNode);
-        }
-    };
-});
-System.register("test", ["VirtualElement", "FullRenderer"], function (exports_4, context_4) {
-    "use strict";
-    var __moduleName = context_4 && context_4.id;
     var VirtualElement_2, FullRenderer_1, TestModel, TestActions, stringList, interactiveButtons, inputMisc, selector, selectorResults, root, mainModel, render;
     return {
         setters: [
