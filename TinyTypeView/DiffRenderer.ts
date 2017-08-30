@@ -12,17 +12,13 @@ export class DiffRenderer{
 
         if (ve.children){       
             if ( typeof(ve.children) == "string"){
-                // if (htmlElement.firstChild){
-                //     htmlElement.removeChild(htmlElement.firstChild);
-                // }
                 if (htmlElement.childNodes.length == 0){
                     htmlElement.appendChild( document.createTextNode(ve.children as string));
                 }
                 else if (htmlElement.childNodes.length > 0 && (htmlElement.lastChild as Text).nodeValue != ve.children as string){
                     htmlElement.removeChild(htmlElement.lastChild as Node);
-                }
-                
-                
+                    htmlElement.appendChild( document.createTextNode(ve.children as string));
+                }                               
             }
             else {
              

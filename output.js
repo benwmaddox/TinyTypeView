@@ -83,6 +83,7 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
                             }
                             else if (htmlElement.childNodes.length > 0 && htmlElement.lastChild.nodeValue != ve.children) {
                                 htmlElement.removeChild(htmlElement.lastChild);
+                                htmlElement.appendChild(document.createTextNode(ve.children));
                             }
                         }
                         else {
