@@ -1,5 +1,6 @@
-import {a, div, button, input, select, option} from "./VirtualElement"
-import {FullRenderer} from "./FullRenderer"
+import {a, div, button, input, select, option} from "./TinyTypeView/VirtualElement"
+// import {FullRenderer} from "./TinyTypeView/FullRenderer"
+import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
 
 class TestModel{
     constructor() {
@@ -57,7 +58,7 @@ var root = (model: TestModel) =>
     div(null, [
         a({href: "#here"}, "Link Here"),
         div({className: "sample",onclick:(f)=>{alert("hah");}}, "Text here"),
-        a({href: "#there"}, "There"),
+        a({href: "#there"}, "There"),        
         button({onclick: (ev)=>{  alert("yay ");}, className: "asdf"}, "Sample Button"),
         stringList(model),
         interactiveButtons(model),
@@ -71,13 +72,12 @@ var mainModel : TestModel = new TestModel() ;
 mainModel.incremental =0;
 mainModel.strings= ["a", "b", "c", "asdfasdf"];
 
-var render = () => {
-    var body = document.body;
-    while(body.firstChild) {
-        body.removeChild(body.firstChild);
-    }
-    var node =FullRenderer.Render( root(mainModel),render);
-    body.appendChild( node);
+var diffRender = new DiffRenderer(render);
+var node = document.createElement('div');
+document.body.appendChild(node);
+function render(){    
+    diffRender.Render(node, null, root(mainModel), true)    
 }
+
 
 render();

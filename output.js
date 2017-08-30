@@ -1,4 +1,4 @@
-System.register("VirtualElement", [], function (exports_1, context_1) {
+System.register("TinyTypeView/VirtualElement", [], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function v(elementTag, attributes, children) {
@@ -57,10 +57,10 @@ System.register("VirtualElement", [], function (exports_1, context_1) {
         }
     };
 });
-System.register("FullRenderer", ["VirtualElement"], function (exports_2, context_2) {
+System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], function (exports_2, context_2) {
     "use strict";
     var __moduleName = context_2 && context_2.id;
-    var VirtualElement_1, FullRenderer;
+    var VirtualElement_1, DiffRenderer;
     return {
         setters: [
             function (VirtualElement_1_1) {
@@ -68,22 +68,57 @@ System.register("FullRenderer", ["VirtualElement"], function (exports_2, context
             }
         ],
         execute: function () {
-            FullRenderer = (function () {
-                function FullRenderer() {
+            DiffRenderer = (function () {
+                function DiffRenderer(eventListener) {
+                    this.lastVirtualElement = null;
+                    this.eventListener = eventListener;
                 }
-                FullRenderer.Render = function (ve, eventListener) {
-                    var el = document.createElement(ve.elementTag);
+                DiffRenderer.prototype.Render = function (htmlElement, oldVe, ve, initial) {
+                    if (initial === void 0) { initial = true; }
+                    var oldVe = (initial && this.lastVirtualElement) ? this.lastVirtualElement : oldVe;
                     if (ve.children) {
-                        for (var i = 0; i < ve.children.length; i++) {
-                            var element = ve.children[i];
-                            if (element === null || element === undefined) {
-                                continue;
+                        if (typeof (ve.children) == "string") {
+                            if (htmlElement.childNodes.length == 0) {
+                                htmlElement.appendChild(document.createTextNode(ve.children));
                             }
-                            if (typeof (element) == "string") {
-                                el.appendChild(document.createTextNode(element));
+                            else if (htmlElement.childNodes.length > 0 && htmlElement.lastChild.nodeValue != ve.children) {
+                                htmlElement.removeChild(htmlElement.lastChild);
                             }
-                            else if (element instanceof VirtualElement_1.VirtualElement) {
-                                el.appendChild(FullRenderer.Render(element, eventListener));
+                        }
+                        else {
+                            var max = oldVe != null && oldVe.children != null && ve.children.length < oldVe.children.length ? oldVe.children.length : ve.children.length;
+                            for (var i = 0; i < max; i++) {
+                                var element = ve.children.length > i ? ve.children[i] : null;
+                                var oldElement = oldVe != null && oldVe.children != null && oldVe.children.length > i ? oldVe.children[i] : null;
+                                if (element instanceof VirtualElement_1.VirtualElement) {
+                                    if (oldElement === null && element) {
+                                        var $elChild = document.createElement(element.elementTag);
+                                        element.element = $elChild;
+                                        htmlElement.appendChild($elChild);
+                                        var $elChild = this.Render($elChild, null, element, false);
+                                    }
+                                    else if (element === null || element === undefined) {
+                                        var oldVE = oldElement;
+                                        if (oldVE !== null && oldVE.element !== null && oldVE.element.parentNode !== null) {
+                                            oldVE.element.parentNode.removeChild(oldVE.element);
+                                        }
+                                    }
+                                    else if (element.elementTag !== oldElement.elementTag) {
+                                        var oldVE = oldElement;
+                                        if (oldElement !== null && oldVE.element !== null && oldVE.element.parentNode !== null) {
+                                            oldVE.element.parentNode.removeChild(oldVE.element);
+                                        }
+                                        var el = document.createElement(element.elementTag);
+                                        var $elChild = this.Render(el, oldVE, element, false);
+                                        element.element = $elChild;
+                                        htmlElement.appendChild($elChild);
+                                    }
+                                    else if (oldElement.element) {
+                                        var oldVE = oldElement;
+                                        var $elChild = this.Render(oldVE.element, oldVE, element, false);
+                                        element.element = $elChild;
+                                    }
+                                }
                             }
                         }
                     }
@@ -95,36 +130,42 @@ System.register("FullRenderer", ["VirtualElement"], function (exports_2, context
                                     key = "class";
                                 }
                                 if (typeof (value) == "function") {
-                                    el.addEventListener(key.substr(2), value, true);
-                                    if (eventListener) {
-                                        el.addEventListener(key.substr(2), eventListener, true);
+                                    htmlElement.addEventListener(key.substr(2), value, true);
+                                    if (this.eventListener) {
+                                        htmlElement.addEventListener(key.substr(2), this.eventListener, true);
                                     }
                                 }
                                 else {
-                                    el.setAttribute(key, value);
+                                    htmlElement.setAttribute(key, value);
                                 }
                             }
                         }
                     }
-                    return el;
+                    if (initial) {
+                        this.lastVirtualElement = ve;
+                    }
+                    return htmlElement;
                 };
-                return FullRenderer;
+                return DiffRenderer;
             }());
-            exports_2("FullRenderer", FullRenderer);
+            exports_2("DiffRenderer", DiffRenderer);
         }
     };
 });
-System.register("main", ["VirtualElement", "FullRenderer"], function (exports_3, context_3) {
+System.register("main", ["TinyTypeView/VirtualElement", "TinyTypeView/DiffRenderer"], function (exports_3, context_3) {
     "use strict";
     var __moduleName = context_3 && context_3.id;
-    var VirtualElement_2, FullRenderer_1, TestModel, TestActions, stringList, interactiveButtons, inputMisc, selector, selectorResults, root, mainModel, render;
+    function render() {
+        diffRender.Render(node, null, root(mainModel), true);
+    }
+    var VirtualElement_2, DiffRenderer_1, TestModel, TestActions, stringList, interactiveButtons, inputMisc, selector, selectorResults, root, mainModel, diffRender, node;
     return {
         setters: [
             function (VirtualElement_2_1) {
                 VirtualElement_2 = VirtualElement_2_1;
             },
-            function (FullRenderer_1_1) {
-                FullRenderer_1 = FullRenderer_1_1;
+            function (DiffRenderer_1_1) {
+                DiffRenderer_1 = DiffRenderer_1_1;
             }
         ],
         execute: function () {
@@ -185,14 +226,9 @@ System.register("main", ["VirtualElement", "FullRenderer"], function (exports_3,
             mainModel = new TestModel();
             mainModel.incremental = 0;
             mainModel.strings = ["a", "b", "c", "asdfasdf"];
-            render = function () {
-                var body = document.body;
-                while (body.firstChild) {
-                    body.removeChild(body.firstChild);
-                }
-                var node = FullRenderer_1.FullRenderer.Render(root(mainModel), render);
-                body.appendChild(node);
-            };
+            diffRender = new DiffRenderer_1.DiffRenderer(render);
+            node = document.createElement('div');
+            document.body.appendChild(node);
             render();
         }
     };
