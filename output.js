@@ -222,7 +222,7 @@ System.register("main", ["TinyTypeView/VirtualElement", "TinyTypeView/DiffRender
                 return VirtualElement_2.div({}, "Selected Index: " + model.selectionIndex);
             };
             moreStringsView = function (model) {
-                return VirtualElement_2.button({ onclick: function () { return model.strings.push("Another"); } }, "More text!");
+                return VirtualElement_2.button({ onclick: function () { return model.strings.push("Another " + model.incremental); } }, "More text!");
             };
             fewerStringsView = function (model) {
                 return VirtualElement_2.button({ onclick: function () { return model.strings.splice(-1, 1); } }, "Fewer text items");

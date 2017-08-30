@@ -55,7 +55,7 @@ let selectorResults = (model:TestModel) =>
     div({}, "Selected Index: " + model.selectionIndex)
 
 let moreStringsView = (model:TestModel) =>
-    button({onclick: ()=> model.strings.push("Another")},"More text!")
+    button({onclick: ()=> model.strings.push("Another " + model.incremental)},"More text!")
 
 let fewerStringsView = (model:TestModel) =>
     button({onclick: ()=> model.strings.splice(-1,1)},"Fewer text items")
