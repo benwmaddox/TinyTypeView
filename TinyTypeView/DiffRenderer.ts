@@ -65,6 +65,8 @@ export class DiffRenderer{
                 }
             }            
         }
+
+        // TODO: comparison of event listener functions from old virtual element to new
         if (ve.attributes){            
             for (var key in ve.attributes){
                 if (ve.attributes.hasOwnProperty(key))

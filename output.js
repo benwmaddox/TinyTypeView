@@ -5,30 +5,254 @@ System.register("TinyTypeView/VirtualElement", [], function (exports_1, context_
         return new VirtualElement(elementTag, attributes, children);
     }
     exports_1("v", v);
-    function div(attributes, children) {
-        return new VirtualElement("div", attributes, children);
-    }
-    exports_1("div", div);
-    function a(attributes, children) {
-        return new VirtualElement("a", attributes, children);
-    }
+    function a(attributes, children) { return new VirtualElement("a", attributes, children); }
     exports_1("a", a);
-    function button(attributes, children) {
-        return new VirtualElement("button", attributes, children);
-    }
+    function applet(attributes, children) { return new VirtualElement("applet", attributes, children); }
+    exports_1("applet", applet);
+    function area(attributes, children) { return new VirtualElement("area", attributes, children); }
+    exports_1("area", area);
+    function audio(attributes, children) { return new VirtualElement("audio", attributes, children); }
+    exports_1("audio", audio);
+    function base(attributes, children) { return new VirtualElement("base", attributes, children); }
+    exports_1("base", base);
+    function basefont(attributes, children) { return new VirtualElement("basefont", attributes, children); }
+    exports_1("basefont", basefont);
+    function blockquote(attributes, children) { return new VirtualElement("blockquote", attributes, children); }
+    exports_1("blockquote", blockquote);
+    function body(attributes, children) { return new VirtualElement("body", attributes, children); }
+    exports_1("body", body);
+    function br(attributes, children) { return new VirtualElement("br", attributes, children); }
+    exports_1("br", br);
+    function button(attributes, children) { return new VirtualElement("button", attributes, children); }
     exports_1("button", button);
-    function input(attributes, children) {
-        return new VirtualElement("input", attributes, children);
-    }
+    function canvas(attributes, children) { return new VirtualElement("canvas", attributes, children); }
+    exports_1("canvas", canvas);
+    function caption(attributes, children) { return new VirtualElement("caption", attributes, children); }
+    exports_1("caption", caption);
+    function col(attributes, children) { return new VirtualElement("col", attributes, children); }
+    exports_1("col", col);
+    function colgroup(attributes, children) { return new VirtualElement("colgroup", attributes, children); }
+    exports_1("colgroup", colgroup);
+    function data(attributes, children) { return new VirtualElement("data", attributes, children); }
+    exports_1("data", data);
+    function datalist(attributes, children) { return new VirtualElement("datalist", attributes, children); }
+    exports_1("datalist", datalist);
+    function del(attributes, children) { return new VirtualElement("del", attributes, children); }
+    exports_1("del", del);
+    function dir(attributes, children) { return new VirtualElement("dir", attributes, children); }
+    exports_1("dir", dir);
+    function div(attributes, children) { return new VirtualElement("div", attributes, children); }
+    exports_1("div", div);
+    function dl(attributes, children) { return new VirtualElement("dl", attributes, children); }
+    exports_1("dl", dl);
+    function embed(attributes, children) { return new VirtualElement("embed", attributes, children); }
+    exports_1("embed", embed);
+    function fieldset(attributes, children) { return new VirtualElement("fieldset", attributes, children); }
+    exports_1("fieldset", fieldset);
+    function font(attributes, children) { return new VirtualElement("font", attributes, children); }
+    exports_1("font", font);
+    function form(attributes, children) { return new VirtualElement("form", attributes, children); }
+    exports_1("form", form);
+    function frame(attributes, children) { return new VirtualElement("frame", attributes, children); }
+    exports_1("frame", frame);
+    function frameset(attributes, children) { return new VirtualElement("frameset", attributes, children); }
+    exports_1("frameset", frameset);
+    function h1(attributes, children) { return new VirtualElement("h1", attributes, children); }
+    exports_1("h1", h1);
+    function h2(attributes, children) { return new VirtualElement("h2", attributes, children); }
+    exports_1("h2", h2);
+    function h3(attributes, children) { return new VirtualElement("h3", attributes, children); }
+    exports_1("h3", h3);
+    function h4(attributes, children) { return new VirtualElement("h4", attributes, children); }
+    exports_1("h4", h4);
+    function h5(attributes, children) { return new VirtualElement("h5", attributes, children); }
+    exports_1("h5", h5);
+    function h6(attributes, children) { return new VirtualElement("h6", attributes, children); }
+    exports_1("h6", h6);
+    function head(attributes, children) { return new VirtualElement("head", attributes, children); }
+    exports_1("head", head);
+    function hr(attributes, children) { return new VirtualElement("hr", attributes, children); }
+    exports_1("hr", hr);
+    function html(attributes, children) { return new VirtualElement("html", attributes, children); }
+    exports_1("html", html);
+    function iframe(attributes, children) { return new VirtualElement("iframe", attributes, children); }
+    exports_1("iframe", iframe);
+    function img(attributes, children) { return new VirtualElement("img", attributes, children); }
+    exports_1("img", img);
+    function input(attributes, children) { return new VirtualElement("input", attributes, children); }
     exports_1("input", input);
-    function select(attributes, children) {
-        return new VirtualElement("select", attributes, children);
-    }
-    exports_1("select", select);
-    function option(attributes, children) {
-        return new VirtualElement("option", attributes, children);
-    }
+    function ins(attributes, children) { return new VirtualElement("ins", attributes, children); }
+    exports_1("ins", ins);
+    function isindex(attributes, children) { return new VirtualElement("isindex", attributes, children); }
+    exports_1("isindex", isindex);
+    function label(attributes, children) { return new VirtualElement("label", attributes, children); }
+    exports_1("label", label);
+    function legend(attributes, children) { return new VirtualElement("legend", attributes, children); }
+    exports_1("legend", legend);
+    function li(attributes, children) { return new VirtualElement("li", attributes, children); }
+    exports_1("li", li);
+    function link(attributes, children) { return new VirtualElement("link", attributes, children); }
+    exports_1("link", link);
+    function listing(attributes, children) { return new VirtualElement("listing", attributes, children); }
+    exports_1("listing", listing);
+    function map(attributes, children) { return new VirtualElement("map", attributes, children); }
+    exports_1("map", map);
+    function marquee(attributes, children) { return new VirtualElement("marquee", attributes, children); }
+    exports_1("marquee", marquee);
+    function menu(attributes, children) { return new VirtualElement("menu", attributes, children); }
+    exports_1("menu", menu);
+    function meta(attributes, children) { return new VirtualElement("meta", attributes, children); }
+    exports_1("meta", meta);
+    function meter(attributes, children) { return new VirtualElement("meter", attributes, children); }
+    exports_1("meter", meter);
+    function nextid(attributes, children) { return new VirtualElement("nextid", attributes, children); }
+    exports_1("nextid", nextid);
+    function object(attributes, children) { return new VirtualElement("object", attributes, children); }
+    exports_1("object", object);
+    function ol(attributes, children) { return new VirtualElement("ol", attributes, children); }
+    exports_1("ol", ol);
+    function optgroup(attributes, children) { return new VirtualElement("optgroup", attributes, children); }
+    exports_1("optgroup", optgroup);
+    function option(attributes, children) { return new VirtualElement("option", attributes, children); }
     exports_1("option", option);
+    function output(attributes, children) { return new VirtualElement("output", attributes, children); }
+    exports_1("output", output);
+    function p(attributes, children) { return new VirtualElement("p", attributes, children); }
+    exports_1("p", p);
+    function param(attributes, children) { return new VirtualElement("param", attributes, children); }
+    exports_1("param", param);
+    function picture(attributes, children) { return new VirtualElement("picture", attributes, children); }
+    exports_1("picture", picture);
+    function pre(attributes, children) { return new VirtualElement("pre", attributes, children); }
+    exports_1("pre", pre);
+    function progress(attributes, children) { return new VirtualElement("progress", attributes, children); }
+    exports_1("progress", progress);
+    function q(attributes, children) { return new VirtualElement("q", attributes, children); }
+    exports_1("q", q);
+    function script(attributes, children) { return new VirtualElement("script", attributes, children); }
+    exports_1("script", script);
+    function select(attributes, children) { return new VirtualElement("select", attributes, children); }
+    exports_1("select", select);
+    function source(attributes, children) { return new VirtualElement("source", attributes, children); }
+    exports_1("source", source);
+    function span(attributes, children) { return new VirtualElement("span", attributes, children); }
+    exports_1("span", span);
+    function style(attributes, children) { return new VirtualElement("style", attributes, children); }
+    exports_1("style", style);
+    function table(attributes, children) { return new VirtualElement("table", attributes, children); }
+    exports_1("table", table);
+    function tbody(attributes, children) { return new VirtualElement("tbody", attributes, children); }
+    exports_1("tbody", tbody);
+    function td(attributes, children) { return new VirtualElement("td", attributes, children); }
+    exports_1("td", td);
+    function template(attributes, children) { return new VirtualElement("template", attributes, children); }
+    exports_1("template", template);
+    function textarea(attributes, children) { return new VirtualElement("textarea", attributes, children); }
+    exports_1("textarea", textarea);
+    function tfoot(attributes, children) { return new VirtualElement("tfoot", attributes, children); }
+    exports_1("tfoot", tfoot);
+    function th(attributes, children) { return new VirtualElement("th", attributes, children); }
+    exports_1("th", th);
+    function thead(attributes, children) { return new VirtualElement("thead", attributes, children); }
+    exports_1("thead", thead);
+    function time(attributes, children) { return new VirtualElement("time", attributes, children); }
+    exports_1("time", time);
+    function title(attributes, children) { return new VirtualElement("title", attributes, children); }
+    exports_1("title", title);
+    function tr(attributes, children) { return new VirtualElement("tr", attributes, children); }
+    exports_1("tr", tr);
+    function track(attributes, children) { return new VirtualElement("track", attributes, children); }
+    exports_1("track", track);
+    function ul(attributes, children) { return new VirtualElement("ul", attributes, children); }
+    exports_1("ul", ul);
+    function video(attributes, children) { return new VirtualElement("video", attributes, children); }
+    exports_1("video", video);
+    function xmp(attributes, children) { return new VirtualElement("xmp", attributes, children); }
+    exports_1("xmp", xmp);
+    function abbr(attributes, children) { return new VirtualElement("abbr", attributes, children); }
+    exports_1("abbr", abbr);
+    function acronym(attributes, children) { return new VirtualElement("acronym", attributes, children); }
+    exports_1("acronym", acronym);
+    function address(attributes, children) { return new VirtualElement("address", attributes, children); }
+    exports_1("address", address);
+    function article(attributes, children) { return new VirtualElement("article", attributes, children); }
+    exports_1("article", article);
+    function aside(attributes, children) { return new VirtualElement("aside", attributes, children); }
+    exports_1("aside", aside);
+    function b(attributes, children) { return new VirtualElement("b", attributes, children); }
+    exports_1("b", b);
+    function bdo(attributes, children) { return new VirtualElement("bdo", attributes, children); }
+    exports_1("bdo", bdo);
+    function big(attributes, children) { return new VirtualElement("big", attributes, children); }
+    exports_1("big", big);
+    function center(attributes, children) { return new VirtualElement("center", attributes, children); }
+    exports_1("center", center);
+    function cite(attributes, children) { return new VirtualElement("cite", attributes, children); }
+    exports_1("cite", cite);
+    function code(attributes, children) { return new VirtualElement("code", attributes, children); }
+    exports_1("code", code);
+    function dd(attributes, children) { return new VirtualElement("dd", attributes, children); }
+    exports_1("dd", dd);
+    function dfn(attributes, children) { return new VirtualElement("dfn", attributes, children); }
+    exports_1("dfn", dfn);
+    function dt(attributes, children) { return new VirtualElement("dt", attributes, children); }
+    exports_1("dt", dt);
+    function em(attributes, children) { return new VirtualElement("em", attributes, children); }
+    exports_1("em", em);
+    function figcaption(attributes, children) { return new VirtualElement("figcaption", attributes, children); }
+    exports_1("figcaption", figcaption);
+    function figure(attributes, children) { return new VirtualElement("figure", attributes, children); }
+    exports_1("figure", figure);
+    function footer(attributes, children) { return new VirtualElement("footer", attributes, children); }
+    exports_1("footer", footer);
+    function header(attributes, children) { return new VirtualElement("header", attributes, children); }
+    exports_1("header", header);
+    function hgroup(attributes, children) { return new VirtualElement("hgroup", attributes, children); }
+    exports_1("hgroup", hgroup);
+    function i(attributes, children) { return new VirtualElement("i", attributes, children); }
+    exports_1("i", i);
+    function kbd(attributes, children) { return new VirtualElement("kbd", attributes, children); }
+    exports_1("kbd", kbd);
+    function keygen(attributes, children) { return new VirtualElement("keygen", attributes, children); }
+    exports_1("keygen", keygen);
+    function mark(attributes, children) { return new VirtualElement("mark", attributes, children); }
+    exports_1("mark", mark);
+    function nav(attributes, children) { return new VirtualElement("nav", attributes, children); }
+    exports_1("nav", nav);
+    function nobr(attributes, children) { return new VirtualElement("nobr", attributes, children); }
+    exports_1("nobr", nobr);
+    function noframes(attributes, children) { return new VirtualElement("noframes", attributes, children); }
+    exports_1("noframes", noframes);
+    function noscript(attributes, children) { return new VirtualElement("noscript", attributes, children); }
+    exports_1("noscript", noscript);
+    function plaintext(attributes, children) { return new VirtualElement("plaintext", attributes, children); }
+    exports_1("plaintext", plaintext);
+    function rt(attributes, children) { return new VirtualElement("rt", attributes, children); }
+    exports_1("rt", rt);
+    function ruby(attributes, children) { return new VirtualElement("ruby", attributes, children); }
+    exports_1("ruby", ruby);
+    function s(attributes, children) { return new VirtualElement("s", attributes, children); }
+    exports_1("s", s);
+    function samp(attributes, children) { return new VirtualElement("samp", attributes, children); }
+    exports_1("samp", samp);
+    function section(attributes, children) { return new VirtualElement("section", attributes, children); }
+    exports_1("section", section);
+    function small(attributes, children) { return new VirtualElement("small", attributes, children); }
+    exports_1("small", small);
+    function strike(attributes, children) { return new VirtualElement("strike", attributes, children); }
+    exports_1("strike", strike);
+    function strong(attributes, children) { return new VirtualElement("strong", attributes, children); }
+    exports_1("strong", strong);
+    function sub(attributes, children) { return new VirtualElement("sub", attributes, children); }
+    exports_1("sub", sub);
+    function sup(attributes, children) { return new VirtualElement("sup", attributes, children); }
+    exports_1("sup", sup);
+    function tt(attributes, children) { return new VirtualElement("tt", attributes, children); }
+    exports_1("tt", tt);
+    function u(attributes, children) { return new VirtualElement("u", attributes, children); }
+    exports_1("u", u);
+    function wbr(attributes, children) { return new VirtualElement("wbr", attributes, children); }
+    exports_1("wbr", wbr);
     function boundSelect() {
         return select({}, []);
     }
@@ -47,6 +271,124 @@ System.register("TinyTypeView/VirtualElement", [], function (exports_1, context_
                 return VirtualElement;
             }());
             exports_1("VirtualElement", VirtualElement);
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
+            ;
             ;
             ;
             ;
