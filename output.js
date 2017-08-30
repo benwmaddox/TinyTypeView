@@ -131,9 +131,12 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
                                     key = "class";
                                 }
                                 if (typeof (value) == "function") {
-                                    htmlElement.addEventListener(key.substr(2), value, true);
-                                    if (this.eventListener) {
-                                        htmlElement.addEventListener(key.substr(2), this.eventListener, true);
+                                    if (!htmlElement["listener" + key]) {
+                                        htmlElement.addEventListener(key.substr(2), value, true);
+                                        if (this.eventListener) {
+                                            htmlElement.addEventListener(key.substr(2), this.eventListener, true);
+                                        }
+                                        htmlElement["listener" + key] = true;
                                     }
                                 }
                                 else {

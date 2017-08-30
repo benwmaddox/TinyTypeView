@@ -69,11 +69,13 @@ export class DiffRenderer{
                     if (key == "className"){
                         key = "class";
                     }          
-                    if (typeof(value) == "function"){                            
-                        // htmlElement.removeEventListener(key.substr(2));
-                        htmlElement.addEventListener(key.substr(2), value, true);
-                        if (this.eventListener){
-                            htmlElement.addEventListener(key.substr(2), this.eventListener, true);
+                    if (typeof(value) == "function"){                
+                        if (!(htmlElement as any)["listener"+key]) {       
+                            htmlElement.addEventListener(key.substr(2), value, true);
+                            if (this.eventListener){
+                                htmlElement.addEventListener(key.substr(2), this.eventListener, true);
+                            }
+                            (htmlElement as any)["listener"+key] = true;
                         }
                     }                    
                     else {
