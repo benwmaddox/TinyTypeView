@@ -15,7 +15,7 @@ export class DiffRenderer{
                 if (htmlElement.childNodes.length == 0){
                     htmlElement.appendChild( document.createTextNode(ve.children as string));
                 }
-                else if (htmlElement.childNodes.length > 0 && (htmlElement.lastChild as Text).nodeValue != ve.children as string){
+                else if (htmlElement.childNodes.length > 0 && (htmlElement.lastChild as Text).nodeValue !== ve.children as string){
                     htmlElement.removeChild(htmlElement.lastChild as Node);
                     htmlElement.appendChild( document.createTextNode(ve.children as string));
                 }                               
@@ -57,6 +57,12 @@ export class DiffRenderer{
                         var $elChild = this.Render(oldVE.element as HTMLElement, oldVE, element, false);
                         element.element = $elChild;
                     }                                       
+                }
+                else if (element === null && oldElement !== null){
+                    var oldVE = oldElement as VirtualElement;
+                    if (oldVE !== null && oldVE.element !== null && oldVE.element.parentNode !== null ){
+                        oldVE.element.parentNode.removeChild(oldVE.element);
+                    }
                 }
             }
         }            

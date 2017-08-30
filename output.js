@@ -81,7 +81,7 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
                             if (htmlElement.childNodes.length == 0) {
                                 htmlElement.appendChild(document.createTextNode(ve.children));
                             }
-                            else if (htmlElement.childNodes.length > 0 && htmlElement.lastChild.nodeValue != ve.children) {
+                            else if (htmlElement.childNodes.length > 0 && htmlElement.lastChild.nodeValue !== ve.children) {
                                 htmlElement.removeChild(htmlElement.lastChild);
                                 htmlElement.appendChild(document.createTextNode(ve.children));
                             }
@@ -118,6 +118,12 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
                                         var oldVE = oldElement;
                                         var $elChild = this.Render(oldVE.element, oldVE, element, false);
                                         element.element = $elChild;
+                                    }
+                                }
+                                else if (element === null && oldElement !== null) {
+                                    var oldVE = oldElement;
+                                    if (oldVE !== null && oldVE.element !== null && oldVE.element.parentNode !== null) {
+                                        oldVE.element.parentNode.removeChild(oldVE.element);
                                     }
                                 }
                             }
@@ -160,9 +166,10 @@ System.register("main", ["TinyTypeView/VirtualElement", "TinyTypeView/DiffRender
     "use strict";
     var __moduleName = context_3 && context_3.id;
     function render() {
-        diffRender.Render(node, null, root(mainModel), true);
+        var newVM = root(mainModel);
+        diffRender.Render(node, null, newVM, true);
     }
-    var VirtualElement_2, DiffRenderer_1, TestModel, TestActions, stringList, interactiveButtons, inputMisc, selector, selectorResults, root, mainModel, diffRender, node;
+    var VirtualElement_2, DiffRenderer_1, TestModel, TestActions, stringList, interactiveButtons, inputMisc, selector, selectorResults, moreStringsView, fewerStringsView, root, mainModel, diffRender, node;
     return {
         setters: [
             function (VirtualElement_2_1) {
@@ -214,6 +221,12 @@ System.register("main", ["TinyTypeView/VirtualElement", "TinyTypeView/DiffRender
             selectorResults = function (model) {
                 return VirtualElement_2.div({}, "Selected Index: " + model.selectionIndex);
             };
+            moreStringsView = function (model) {
+                return VirtualElement_2.button({ onclick: function () { return model.strings.push("Another"); } }, "More text!");
+            };
+            fewerStringsView = function (model) {
+                return VirtualElement_2.button({ onclick: function () { return model.strings.splice(-1, 1); } }, "Fewer text items");
+            };
             root = function (model) {
                 return VirtualElement_2.div(null, [
                     VirtualElement_2.a({ href: "#here" }, "Link Here"),
@@ -224,7 +237,9 @@ System.register("main", ["TinyTypeView/VirtualElement", "TinyTypeView/DiffRender
                     interactiveButtons(model),
                     inputMisc(model),
                     selector(model),
-                    selectorResults(model)
+                    selectorResults(model),
+                    moreStringsView(model),
+                    fewerStringsView(model)
                 ]);
             };
             mainModel = new TestModel();

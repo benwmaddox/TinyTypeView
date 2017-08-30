@@ -54,6 +54,12 @@ let selector = (model: TestModel) =>
 let selectorResults = (model:TestModel) =>
     div({}, "Selected Index: " + model.selectionIndex)
 
+let moreStringsView = (model:TestModel) =>
+    button({onclick: ()=> model.strings.push("Another")},"More text!")
+
+let fewerStringsView = (model:TestModel) =>
+    button({onclick: ()=> model.strings.splice(-1,1)},"Fewer text items")
+
 var root = (model: TestModel) =>
     div(null, [
         a({href: "#here"}, "Link Here"),
@@ -64,7 +70,9 @@ var root = (model: TestModel) =>
         interactiveButtons(model),
         inputMisc(model),
         selector(model),
-        selectorResults(model)
+        selectorResults(model),
+        moreStringsView(model),
+        fewerStringsView(model)
     ]
     );
 
@@ -76,7 +84,8 @@ var diffRender = new DiffRenderer(render);
 var node = document.createElement('div');
 document.body.appendChild(node);
 function render(){    
-    diffRender.Render(node, null, root(mainModel), true)    
+    var newVM = root(mainModel);
+    diffRender.Render(node, null, newVM, true)    
 }
 
 
