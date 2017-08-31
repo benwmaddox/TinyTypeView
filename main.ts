@@ -1,4 +1,4 @@
-import {a, div, button, input, select, option} from "./TinyTypeView/VirtualElement"
+import {a, div, button, input, select, option, h1} from "./TinyTypeView/VirtualElement"
 // import {FullRenderer} from "./TinyTypeView/FullRenderer"
 import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
 
@@ -62,6 +62,7 @@ let fewerStringsView = (model:TestModel) =>
 
 var root = (model: TestModel) =>
     div(null, [
+        h1({}, "Giant H1!!"),
         a({href: "#here"}, "Link Here"),
         div({className: "sample",onclick:(f)=>{alert("hah");}}, "Text here"),
         a({href: "#there"}, "There"),        

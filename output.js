@@ -363,6 +363,7 @@ System.register("main", ["TinyTypeView/VirtualElement", "TinyTypeView/DiffRender
             };
             root = function (model) {
                 return VirtualElement_2.div(null, [
+                    VirtualElement_2.h1({}, "Giant H1!!"),
                     VirtualElement_2.a({ href: "#here" }, "Link Here"),
                     VirtualElement_2.div({ className: "sample", onclick: function (f) { alert("hah"); } }, "Text here"),
                     VirtualElement_2.a({ href: "#there" }, "There"),
