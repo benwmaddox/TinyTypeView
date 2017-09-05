@@ -1,4 +1,5 @@
-import {a, div, button, input, select, option, h1, boundSelect} from "./TinyTypeView/VirtualElement"
+import {a, div, button, input, select, option, h1,} from "./TinyTypeView/HtmlTypes"
+import { boundSelect} from "./TinyTypeView/BoundTypes"
 // import {FullRenderer} from "./TinyTypeView/FullRenderer"
 import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
 
