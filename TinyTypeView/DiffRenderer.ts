@@ -73,7 +73,7 @@ export class DiffRenderer{
                 {  
                     let value = ve.attributes[key];      
                     let oldValue = oldVe != null ? oldVe.attributes[key] : null; 
-                    if (oldValue != null && oldValue === value){ // Compares values and function references
+                    if (oldVe != null && oldValue === value){ // Compares values and function references
                         continue;
                     }
                     if (key == "className"){
@@ -81,7 +81,7 @@ export class DiffRenderer{
                     }          
                     if (typeof(value) == "function"){                    
                         if (oldValue !== null){
-                            htmlElement.removeEventListener(key.substr(2), oldValue, false);
+                            htmlElement.removeEventListener(key.substr(2), oldValue, true);
                         }
                         
                         htmlElement.addEventListener(key.substr(2), value, true);

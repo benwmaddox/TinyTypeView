@@ -104,13 +104,19 @@ export function ul(attributes?: Attribute<HTMLUListElement> | null , children?: 
 export function video(attributes?: Attribute<HTMLVideoElement> | null , children?: VirtualElement[] | null | string ){     return new VirtualElement("video", attributes, children);}
 export function xmp(attributes?: Attribute<HTMLPreElement> | null , children?: VirtualElement[] | null | string ){     return new VirtualElement("xmp", attributes, children);}
 
-
-export function boundSelect() {
-    // select({onchange: function(this: HTMLSelectElement, f) { model.selectionIndex= this.selectedIndex}, className: "sampleClass"}, [
+// type VirtualElementRender  = {    
+//     [P in keyof T]?: T[P];
+// } 
+// options: SelectedIndexField : string, IndexField: any, root object (that contains index), children?
+export function boundSelect<T, K extends keyof T>(SelectedIndexField: K, attributes: Attribute<HTMLSelectElement> | null, childRenderFunction: (item:T, selected: boolean) => VirtualElement, children: T[]) : VirtualElement {
+    // return select({onchange: function(this: HTMLSelectElement, f) { model.selectionIndex= this.selectedIndex}, className: "sampleClass"}, [
     //     option({value:"a"},"aa"),
     //     option({value:"b"},"bb")]
     // )
-    return select({},[]);
+    
+    // TODO: Add in options, default change event handling, default changing of value, setting options based on selected index
+
+    return select(attributes,children.map((m,i)=> childRenderFunction(m, false)) );
 }
 
 // export type HtmlVirtualElements = {

@@ -1,4 +1,4 @@
-import {a, div, button, input, select, option, h1} from "./TinyTypeView/VirtualElement"
+import {a, div, button, input, select, option, h1, boundSelect} from "./TinyTypeView/VirtualElement"
 // import {FullRenderer} from "./TinyTypeView/FullRenderer"
 import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
 
@@ -10,28 +10,33 @@ class TestModel{
 
     incremental: number;
     strings: string[];
+    options: TestOption[];
     selectionIndex:number;
 }
 
+class TestOption{
+    public name:string;
+    public value: string;
+}
 
 class TestActions{
     public Model : TestModel; 
     constructor(model:TestModel) {        
         this.Model = model;
     }
-    public increment = () =>
+    public increment = () => 
     {
         this.Model.incremental++;
     }
-    public decrement= () =>
+    public decrement = () => 
     {
         this.Model.incremental--;
     }
-    public moreStrings = () =>
+    public moreStrings = () => 
     { 
         this.Model.strings.push("Another " + this.Model.incremental)
     }
-    public fewerStrings = () =>
+    public fewerStrings = () => 
     { 
         this.Model.strings.splice(-1,1);
     }
@@ -60,6 +65,12 @@ let selector = (model: TestModel) =>
         option({value:"b"},"bb")]
     )
 
+let sampleOption = (model: TestOption) =>     
+    option({value: model.value}, model.name);
+
+let sampleBoundSelect = (model: TestModel) =>
+        boundSelect("value", {}, sampleOption, model.options)
+
 let selectorResults = (model:TestModel) =>
     div({}, "Selected Index: " + model.selectionIndex)
 
@@ -73,7 +84,7 @@ var root = (model: TestModel) =>
     div(null, [
         h1({}, "Giant H1!!"),
         a({href: "#here"}, "Link Here"),
-        //div({className: "sample",onclick:(f)=>{alert("hah");}}, "Text here"),
+        div({className: "sample",onclick:(f)=>{alert("hah");}}, "Text here"),
         a({href: "#there"}, "There"),        
         //button({onclick: (ev)=>{  alert("yay ");}, className: "asdf"}, "Sample Button"),
         stringList(model),
@@ -82,14 +93,15 @@ var root = (model: TestModel) =>
         selector(model),
         selectorResults(model),
         moreStringsView(model),
-        fewerStringsView(model)
+        fewerStringsView(model),
+        sampleBoundSelect(model)
     ]
     );
 
 var mainModel : TestModel = new TestModel() ;
 mainModel.incremental =0;
 mainModel.strings= ["a", "b", "c", "asdfasdf"];
-
+mainModel.options = [{name: "b", value: "2"}, {name: "c", value: "3"}];
 var diffRender = new DiffRenderer(render);
 var node = document.createElement('div');
 document.body.appendChild(node);
