@@ -27,6 +27,15 @@ class TestActions{
     {
         this.Model.incremental--;
     }
+    public moreStrings = () =>
+    { 
+        this.Model.strings.push("Another " + this.Model.incremental)
+    }
+    public fewerStrings = () =>
+    { 
+        this.Model.strings.splice(-1,1);
+    }
+    
 }
 
 var stringList = (model: TestModel) =>
@@ -55,18 +64,18 @@ let selectorResults = (model:TestModel) =>
     div({}, "Selected Index: " + model.selectionIndex)
 
 let moreStringsView = (model:TestModel) =>
-    button({onclick: ()=> model.strings.push("Another " + model.incremental)},"More text!")
+    button({onclick: model.actions.moreStrings},"More text!")
 
 let fewerStringsView = (model:TestModel) =>
-    button({onclick: ()=> model.strings.splice(-1,1)},"Fewer text items")
+    button({onclick: model.actions.fewerStrings },"Fewer text items")
 
 var root = (model: TestModel) =>
     div(null, [
         h1({}, "Giant H1!!"),
         a({href: "#here"}, "Link Here"),
-        div({className: "sample",onclick:(f)=>{alert("hah");}}, "Text here"),
+        //div({className: "sample",onclick:(f)=>{alert("hah");}}, "Text here"),
         a({href: "#there"}, "There"),        
-        button({onclick: (ev)=>{  alert("yay ");}, className: "asdf"}, "Sample Button"),
+        //button({onclick: (ev)=>{  alert("yay ");}, className: "asdf"}, "Sample Button"),
         stringList(model),
         interactiveButtons(model),
         inputMisc(model),

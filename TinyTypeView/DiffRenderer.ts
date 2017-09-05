@@ -22,66 +22,71 @@ export class DiffRenderer{
             else {             
                 var max = oldVe != null && oldVe.children != null && ve.children.length < oldVe.children.length ? oldVe.children.length : ve.children.length;
                 for (var i = 0; i < max; i++) {
-                    var element = ve.children.length > i ? ve.children[i] : null;     
-                    var oldElement = oldVe != null && oldVe.children != null && oldVe.children.length > i ? oldVe.children[i] : null;
+                    let element = ve.children.length > i ? ve.children[i] : null;     
+                    let oldElement = oldVe != null && oldVe.children != null && oldVe.children.length > i ? oldVe.children[i] : null;
                     
                     if (element instanceof VirtualElement ) {             
                         
                         if (oldElement === null && element){
-                            var $elChild =  document.createElement(element.elementTag);
+                            let $elChild =  document.createElement(element.elementTag);
                             element.element = $elChild;
                             htmlElement.appendChild($elChild);
-                            var $elChild = this.Render($elChild, null, element, false);                        
+                            this.Render($elChild, null, element, false);                        
                         }
                         else if (element === null || element === undefined){      
-                            var oldVE = oldElement as VirtualElement;
-                            if (oldVE !== null && oldVE.element !== null && oldVE.element.parentNode !== null ){
-                                oldVE.element.parentNode.removeChild(oldVE.element);
+                            let oldVeChild = oldElement as VirtualElement;
+                            if (oldVeChild !== null && oldVeChild.element !== null && oldVeChild.element.parentNode !== null ){
+                                oldVeChild.element.parentNode.removeChild(oldVeChild.element);
                             }
                         }
                         else if (element.elementTag !== (oldElement as VirtualElement).elementTag) {
                             // Different types: remove old and add new  
-                            var oldVE = oldElement as VirtualElement;
-                            if (oldElement !== null && oldVE.element !== null && oldVE.element.parentNode !== null ){
-                                oldVE.element.parentNode.removeChild(oldVE.element);
+                            let oldVeChild = oldElement as VirtualElement;
+                            if (oldElement !== null && oldVeChild.element !== null && oldVeChild.element.parentNode !== null ){
+                                oldVeChild.element.parentNode.removeChild(oldVeChild.element);
                             }
-                            var el =  document.createElement(element.elementTag);
-                            var $elChild = this.Render(el, oldVE, element, false);
+                            let el =  document.createElement(element.elementTag);
+                            let $elChild = this.Render(el, oldVeChild, element, false);
                             element.element = $elChild;    
                             htmlElement.appendChild($elChild);
                         }
                         else if ((oldElement as VirtualElement).element) {
-                            var oldVE = oldElement as VirtualElement;
-                            var $elChild = this.Render(oldVE.element as HTMLElement, oldVE, element, false);
+                            let oldVeChild = oldElement as VirtualElement;
+                            let $elChild = this.Render(oldVeChild.element as HTMLElement, oldVeChild, element, false);
                             element.element = $elChild;
                         }                                       
                     }
                     else if (element === null && oldElement !== null){
-                        var oldVE = oldElement as VirtualElement;
-                        if (oldVE !== null && oldVE.element !== null && oldVE.element.parentNode !== null ){
-                            oldVE.element.parentNode.removeChild(oldVE.element);
+                        let oldVeChild = oldElement as VirtualElement;
+                        if (oldVeChild !== null && oldVeChild.element !== null && oldVeChild.element.parentNode !== null ){
+                            oldVeChild.element.parentNode.removeChild(oldVeChild.element);
                         }
                     }
                 }
             }            
         }
 
-        // TODO: comparison of event listener functions from old virtual element to new
+        //TODO: what to do if old item had attribute and new doesn't
         if (ve.attributes){            
             for (var key in ve.attributes){
                 if (ve.attributes.hasOwnProperty(key))
-                {                    
-                    var value = ve.attributes[key];                          
+                {  
+                    let value = ve.attributes[key];      
+                    let oldValue = oldVe != null ? oldVe.attributes[key] : null; 
+                    if (oldValue != null && oldValue === value){ // Compares values and function references
+                        continue;
+                    }
                     if (key == "className"){
                         key = "class";
                     }          
-                    if (typeof(value) == "function"){                
-                        if (!(htmlElement as any)["listener"+key]) {       
-                            htmlElement.addEventListener(key.substr(2), value, true);
-                            if (this.eventListener){
-                                htmlElement.addEventListener(key.substr(2), this.eventListener, true);
-                            }
-                            (htmlElement as any)["listener"+key] = true;
+                    if (typeof(value) == "function"){                    
+                        if (oldValue !== null){
+                            htmlElement.removeEventListener(key.substr(2), oldValue, false);
+                        }
+                        
+                        htmlElement.addEventListener(key.substr(2), value, true);
+                        if (oldValue == null && this.eventListener){
+                            htmlElement.addEventListener(key.substr(2), this.eventListener, true);
                         }
                     }                    
                     else {

@@ -230,34 +230,34 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
                                         var $elChild = document.createElement(element.elementTag);
                                         element.element = $elChild;
                                         htmlElement.appendChild($elChild);
-                                        var $elChild = this.Render($elChild, null, element, false);
+                                        this.Render($elChild, null, element, false);
                                     }
                                     else if (element === null || element === undefined) {
-                                        var oldVE = oldElement;
-                                        if (oldVE !== null && oldVE.element !== null && oldVE.element.parentNode !== null) {
-                                            oldVE.element.parentNode.removeChild(oldVE.element);
+                                        var oldVeChild = oldElement;
+                                        if (oldVeChild !== null && oldVeChild.element !== null && oldVeChild.element.parentNode !== null) {
+                                            oldVeChild.element.parentNode.removeChild(oldVeChild.element);
                                         }
                                     }
                                     else if (element.elementTag !== oldElement.elementTag) {
-                                        var oldVE = oldElement;
-                                        if (oldElement !== null && oldVE.element !== null && oldVE.element.parentNode !== null) {
-                                            oldVE.element.parentNode.removeChild(oldVE.element);
+                                        var oldVeChild = oldElement;
+                                        if (oldElement !== null && oldVeChild.element !== null && oldVeChild.element.parentNode !== null) {
+                                            oldVeChild.element.parentNode.removeChild(oldVeChild.element);
                                         }
                                         var el = document.createElement(element.elementTag);
-                                        var $elChild = this.Render(el, oldVE, element, false);
+                                        var $elChild = this.Render(el, oldVeChild, element, false);
                                         element.element = $elChild;
                                         htmlElement.appendChild($elChild);
                                     }
                                     else if (oldElement.element) {
-                                        var oldVE = oldElement;
-                                        var $elChild = this.Render(oldVE.element, oldVE, element, false);
+                                        var oldVeChild = oldElement;
+                                        var $elChild = this.Render(oldVeChild.element, oldVeChild, element, false);
                                         element.element = $elChild;
                                     }
                                 }
                                 else if (element === null && oldElement !== null) {
-                                    var oldVE = oldElement;
-                                    if (oldVE !== null && oldVE.element !== null && oldVE.element.parentNode !== null) {
-                                        oldVE.element.parentNode.removeChild(oldVE.element);
+                                    var oldVeChild = oldElement;
+                                    if (oldVeChild !== null && oldVeChild.element !== null && oldVeChild.element.parentNode !== null) {
+                                        oldVeChild.element.parentNode.removeChild(oldVeChild.element);
                                     }
                                 }
                             }
@@ -267,16 +267,20 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
                         for (var key in ve.attributes) {
                             if (ve.attributes.hasOwnProperty(key)) {
                                 var value = ve.attributes[key];
+                                var oldValue = oldVe != null ? oldVe.attributes[key] : null;
+                                if (oldValue != null && oldValue === value) {
+                                    continue;
+                                }
                                 if (key == "className") {
                                     key = "class";
                                 }
                                 if (typeof (value) == "function") {
-                                    if (!htmlElement["listener" + key]) {
-                                        htmlElement.addEventListener(key.substr(2), value, true);
-                                        if (this.eventListener) {
-                                            htmlElement.addEventListener(key.substr(2), this.eventListener, true);
-                                        }
-                                        htmlElement["listener" + key] = true;
+                                    if (oldValue !== null) {
+                                        htmlElement.removeEventListener(key.substr(2), oldValue, false);
+                                    }
+                                    htmlElement.addEventListener(key.substr(2), value, true);
+                                    if (oldValue == null && this.eventListener) {
+                                        htmlElement.addEventListener(key.substr(2), this.eventListener, true);
                                     }
                                 }
                                 else {
@@ -329,6 +333,12 @@ System.register("main", ["TinyTypeView/VirtualElement", "TinyTypeView/DiffRender
                     this.decrement = function () {
                         _this.Model.incremental--;
                     };
+                    this.moreStrings = function () {
+                        _this.Model.strings.push("Another " + _this.Model.incremental);
+                    };
+                    this.fewerStrings = function () {
+                        _this.Model.strings.splice(-1, 1);
+                    };
                     this.Model = model;
                 }
                 return TestActions;
@@ -356,18 +366,16 @@ System.register("main", ["TinyTypeView/VirtualElement", "TinyTypeView/DiffRender
                 return VirtualElement_2.div({}, "Selected Index: " + model.selectionIndex);
             };
             moreStringsView = function (model) {
-                return VirtualElement_2.button({ onclick: function () { return model.strings.push("Another " + model.incremental); } }, "More text!");
+                return VirtualElement_2.button({ onclick: model.actions.moreStrings }, "More text!");
             };
             fewerStringsView = function (model) {
-                return VirtualElement_2.button({ onclick: function () { return model.strings.splice(-1, 1); } }, "Fewer text items");
+                return VirtualElement_2.button({ onclick: model.actions.fewerStrings }, "Fewer text items");
             };
             root = function (model) {
                 return VirtualElement_2.div(null, [
                     VirtualElement_2.h1({}, "Giant H1!!"),
                     VirtualElement_2.a({ href: "#here" }, "Link Here"),
-                    VirtualElement_2.div({ className: "sample", onclick: function (f) { alert("hah"); } }, "Text here"),
                     VirtualElement_2.a({ href: "#there" }, "There"),
-                    VirtualElement_2.button({ onclick: function (ev) { alert("yay "); }, className: "asdf" }, "Sample Button"),
                     stringList(model),
                     interactiveButtons(model),
                     inputMisc(model),
