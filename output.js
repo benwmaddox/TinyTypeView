@@ -268,13 +268,13 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
                                     }
                                     else if (element.elementTag !== oldElement.elementTag) {
                                         var oldVeChild = oldElement;
-                                        if (oldElement !== null && oldVeChild.element !== null && oldVeChild.element.parentNode !== null) {
-                                            oldVeChild.element.parentNode.removeChild(oldVeChild.element);
-                                        }
                                         var el = document.createElement(element.elementTag);
                                         var $elChild = this.Render(el, oldVeChild, element, false);
                                         element.element = $elChild;
-                                        htmlElement.appendChild($elChild);
+                                        htmlElement.insertBefore($elChild, oldVeChild.element);
+                                        if (oldElement !== null && oldVeChild.element !== null && oldVeChild.element.parentNode !== null) {
+                                            oldVeChild.element.parentNode.removeChild(oldVeChild.element);
+                                        }
                                     }
                                     else if (oldElement.element) {
                                         var oldVeChild = oldElement;
@@ -375,6 +375,9 @@ System.register("main", ["TinyTypeView/HtmlTypes", "TinyTypeView/BoundTypes", "T
                     this.fewerStrings = function () {
                         _this.Model.strings.splice(-1, 1);
                     };
+                    this.indexChange = function (ev) {
+                        _this.Model.selectionIndex = ev.currentTarget.selectedIndex;
+                    };
                     this.Model = model;
                 }
                 return TestActions;
@@ -393,7 +396,7 @@ System.register("main", ["TinyTypeView/HtmlTypes", "TinyTypeView/BoundTypes", "T
                 return HtmlTypes_2.input({ autofocus: true, placeholder: "TODO" });
             };
             selector = function (model) {
-                return HtmlTypes_2.select({ onchange: function (f) { model.selectionIndex = this.selectedIndex; }, className: "sampleClass" }, [
+                return HtmlTypes_2.select({ onchange: model.actions.indexChange, className: "sampleClass" }, [
                     HtmlTypes_2.option({ value: "a" }, "aa"),
                     HtmlTypes_2.option({ value: "b" }, "bb")
                 ]);

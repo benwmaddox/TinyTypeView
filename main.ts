@@ -41,7 +41,10 @@ class TestActions{
     { 
         this.Model.strings.splice(-1,1);
     }
-    
+    public indexChange  = (ev : Event) =>
+    {
+        this.Model.selectionIndex = (<HTMLSelectElement>ev.currentTarget).selectedIndex;
+    }    
 }
 
 var stringList = (model: TestModel) =>
@@ -61,7 +64,7 @@ let inputMisc = (model: TestModel) =>
 
 
 let selector = (model: TestModel) =>
-    select({onchange: function(this: HTMLSelectElement, f) { model.selectionIndex= this.selectedIndex}, className: "sampleClass"}, [
+    select({onchange: model.actions.indexChange, className: "sampleClass"}, [
         option({value:"a"},"aa"),
         option({value:"b"},"bb")]
     )

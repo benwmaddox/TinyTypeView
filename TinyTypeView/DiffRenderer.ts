@@ -42,13 +42,14 @@ export class DiffRenderer{
                         else if (element.elementTag !== (oldElement as VirtualElement).elementTag) {
                             // Different types: remove old and add new  
                             let oldVeChild = oldElement as VirtualElement;
-                            if (oldElement !== null && oldVeChild.element !== null && oldVeChild.element.parentNode !== null ){
-                                oldVeChild.element.parentNode.removeChild(oldVeChild.element);
-                            }
                             let el =  document.createElement(element.elementTag);
                             let $elChild = this.Render(el, oldVeChild, element, false);
                             element.element = $elChild;    
-                            htmlElement.appendChild($elChild);
+                            htmlElement.insertBefore($elChild, oldVeChild.element)
+                            
+                            if (oldElement !== null && oldVeChild.element !== null && oldVeChild.element.parentNode !== null ){
+                                oldVeChild.element.parentNode.removeChild(oldVeChild.element);
+                            }
                         }
                         else if ((oldElement as VirtualElement).element) {
                             let oldVeChild = oldElement as VirtualElement;

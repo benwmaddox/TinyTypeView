@@ -1,6 +1,6 @@
 import {VirtualElement} from "./VirtualElement"
 
-export class FullRenderer{
+export class OneTimeRenderer{
     public static Render(ve : VirtualElement, eventListener : EventListener) : Node {
         var el =  document.createElement(ve.elementTag);
 
@@ -14,7 +14,7 @@ export class FullRenderer{
                     el.appendChild(document.createTextNode(element))
                 }
                  else if (element instanceof VirtualElement){         
-                    el.appendChild(FullRenderer.Render(element,eventListener))
+                    el.appendChild(OneTimeRenderer.Render(element,eventListener))
                 }
 
             }            
