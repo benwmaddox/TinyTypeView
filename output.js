@@ -328,14 +328,51 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
         }
     };
 });
-System.register("main", ["TinyTypeView/HtmlTypes", "TinyTypeView/BoundTypes", "TinyTypeView/DiffRenderer"], function (exports_5, context_5) {
+System.register("TinyTypeView/ChangeWrapper", [], function (exports_5, context_5) {
     "use strict";
     var __moduleName = context_5 && context_5.id;
+    var ChangeWrapper;
+    return {
+        setters: [],
+        execute: function () {
+            ChangeWrapper = (function () {
+                function ChangeWrapper(wrappedItem, callback) {
+                    this.wrapProperty = function (instance, propName, callback) {
+                        Object.defineProperty(instance, propName, {
+                            get: function () {
+                                return instance["___" + propName];
+                            },
+                            set: function (value) {
+                                callback(instance, propName, value);
+                                instance["___" + propName] = value;
+                            },
+                            enumerable: true,
+                            configurable: true
+                        });
+                    };
+                    this.wrapped = wrappedItem;
+                    for (var prop in this.wrapped) {
+                        if (typeof (this.wrapped[prop]) != "function") {
+                            this.wrapped["___" + prop] = this.wrapped[prop];
+                            delete this.wrapped[prop];
+                            this.wrapProperty(this.wrapped, prop, callback);
+                        }
+                    }
+                }
+                return ChangeWrapper;
+            }());
+            exports_5("ChangeWrapper", ChangeWrapper);
+        }
+    };
+});
+System.register("main", ["TinyTypeView/HtmlTypes", "TinyTypeView/BoundTypes", "TinyTypeView/DiffRenderer", "TinyTypeView/ChangeWrapper"], function (exports_6, context_6) {
+    "use strict";
+    var __moduleName = context_6 && context_6.id;
     function render() {
         var newVM = root(mainModel);
         diffRender.Render(node, null, newVM, true);
     }
-    var HtmlTypes_2, BoundTypes_1, DiffRenderer_1, TestModel, TestOption, TestActions, stringList, interactiveButtons, inputMisc, selector, sampleOption, sampleBoundSelect, selectorResults, moreStringsView, fewerStringsView, root, mainModel, diffRender, node;
+    var HtmlTypes_2, BoundTypes_1, DiffRenderer_1, ChangeWrapper_1, TestModel, TestOption, TestActions, stringList, interactiveButtons, inputMisc, selector, sampleOption, sampleBoundSelect, selectorResults, moreStringsView, fewerStringsView, root, mainModel, diffRender, node, wrapper;
     return {
         setters: [
             function (HtmlTypes_2_1) {
@@ -346,6 +383,9 @@ System.register("main", ["TinyTypeView/HtmlTypes", "TinyTypeView/BoundTypes", "T
             },
             function (DiffRenderer_1_1) {
                 DiffRenderer_1 = DiffRenderer_1_1;
+            },
+            function (ChangeWrapper_1_1) {
+                ChangeWrapper_1 = ChangeWrapper_1_1;
             }
         ],
         execute: function () {
@@ -436,10 +476,12 @@ System.register("main", ["TinyTypeView/HtmlTypes", "TinyTypeView/BoundTypes", "T
             mainModel.incremental = 0;
             mainModel.strings = ["a", "b", "c", "asdfasdf"];
             mainModel.options = [{ name: "b", value: "2" }, { name: "c", value: "3" }];
+            mainModel.selectionIndex = -1;
             diffRender = new DiffRenderer_1.DiffRenderer(render);
             node = document.createElement('div');
             document.body.appendChild(node);
             render();
+            wrapper = new ChangeWrapper_1.ChangeWrapper(mainModel, function (item, prop, value) { console.log(prop + " " + value + " changed"); });
         }
     };
 });

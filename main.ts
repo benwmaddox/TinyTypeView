@@ -2,6 +2,7 @@ import {a, div, button, input, select, option, h1,} from "./TinyTypeView/HtmlTyp
 import { boundSelect} from "./TinyTypeView/BoundTypes"
 // import {FullRenderer} from "./TinyTypeView/FullRenderer"
 import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
+import {ChangeWrapper} from "./TinyTypeView/ChangeWrapper"
 
 class TestModel{
     constructor() {
@@ -106,6 +107,7 @@ var mainModel : TestModel = new TestModel() ;
 mainModel.incremental =0;
 mainModel.strings= ["a", "b", "c", "asdfasdf"];
 mainModel.options = [{name: "b", value: "2"}, {name: "c", value: "3"}];
+mainModel.selectionIndex = -1;
 var diffRender = new DiffRenderer(render);
 var node = document.createElement('div');
 document.body.appendChild(node);
@@ -114,5 +116,7 @@ function render(){
     diffRender.Render(node, null, newVM, true)    
 }
 
-
 render();
+
+var wrapper = new ChangeWrapper(mainModel, (item, prop, value) => { console.log(prop + " " + value + " changed")});
+
