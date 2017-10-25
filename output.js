@@ -331,30 +331,59 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
 System.register("TinyTypeView/ChangeWrapper", [], function (exports_5, context_5) {
     "use strict";
     var __moduleName = context_5 && context_5.id;
-    var ChangeWrapper;
+    var ChangeWrapper, ArrayWrapper;
     return {
         setters: [],
         execute: function () {
             ChangeWrapper = (function () {
                 function ChangeWrapper(wrappedItem, callback) {
                     this.wrapProperty = function (instance, propName, callback) {
-                        Object.defineProperty(instance, propName, {
-                            get: function () {
-                                return instance["___" + propName];
-                            },
-                            set: function (value) {
-                                callback(instance, propName, value);
-                                instance["___" + propName] = value;
-                            },
-                            enumerable: true,
-                            configurable: true
-                        });
+                        var arrayChangeFunctions = ['push', 'pop', 'splice'];
+                        if (Array.isArray(instance[propName])) {
+                            for (var key in instance[propName]) {
+                                if (typeof instance[propName][key] === "object" && instance[propName][key] !== null) {
+                                    var wrapper = new ChangeWrapper(instance[propName][key], callback);
+                                }
+                            }
+                            var arrayProperty = instance[propName];
+                            var originalPush = arrayProperty.push;
+                            arrayProperty.push = function () {
+                                var result = originalPush.apply(this, arguments);
+                                callback(instance, propName, arrayProperty);
+                                return result;
+                            };
+                            var originalPop = arrayProperty.pop;
+                            arrayProperty.pop = function () {
+                                var result = originalPop();
+                                callback(instance, propName, arrayProperty);
+                                return result;
+                            };
+                            var originalSlice = arrayProperty.slice;
+                            arrayProperty.slice = function () {
+                                var result = originalSlice.apply(this, arguments);
+                                callback(instance, propName, arrayProperty);
+                                return result;
+                            };
+                        }
+                        else {
+                            instance["___" + propName] = instance[propName];
+                            delete instance[propName];
+                            Object.defineProperty(instance, propName, {
+                                get: function () {
+                                    return instance["___" + propName];
+                                },
+                                set: function (value) {
+                                    callback(instance, propName, value);
+                                    instance["___" + propName] = value;
+                                },
+                                enumerable: true,
+                                configurable: true
+                            });
+                        }
                     };
                     this.wrapped = wrappedItem;
                     for (var prop in this.wrapped) {
                         if (typeof (this.wrapped[prop]) != "function") {
-                            this.wrapped["___" + prop] = this.wrapped[prop];
-                            delete this.wrapped[prop];
                             this.wrapProperty(this.wrapped, prop, callback);
                         }
                     }
@@ -362,6 +391,12 @@ System.register("TinyTypeView/ChangeWrapper", [], function (exports_5, context_5
                 return ChangeWrapper;
             }());
             exports_5("ChangeWrapper", ChangeWrapper);
+            ArrayWrapper = (function () {
+                function ArrayWrapper() {
+                }
+                return ArrayWrapper;
+            }());
+            exports_5("ArrayWrapper", ArrayWrapper);
         }
     };
 });
@@ -481,7 +516,7 @@ System.register("main", ["TinyTypeView/HtmlTypes", "TinyTypeView/BoundTypes", "T
             node = document.createElement('div');
             document.body.appendChild(node);
             render();
-            wrapper = new ChangeWrapper_1.ChangeWrapper(mainModel, function (item, prop, value) { console.log(prop + " " + value + " changed"); });
+            wrapper = new ChangeWrapper_1.ChangeWrapper(mainModel, function (item, prop, value) { console.log(prop + ": " + value); });
         }
     };
 });
