@@ -50,13 +50,13 @@ export class ChangeWrapper<T>
             }
             var originalPop = arrayProperty.pop;
             arrayProperty.pop = function(){
-                var result = originalPop();                    
+                var result = originalPop.apply(this, arguments);                    
                 callback(instance, propName, arrayProperty);
                 return result;
             }
-            var originalSlice = arrayProperty.slice;
-            arrayProperty.slice = function(){
-                var result = originalSlice.apply(this, arguments);                    
+            var originalSplice = arrayProperty.splice;
+            arrayProperty.splice = function(){
+                var result = originalSplice.apply(this, arguments);                    
                 callback(instance, propName, arrayProperty);
                 return result;
             }
