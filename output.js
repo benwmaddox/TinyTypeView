@@ -364,22 +364,38 @@ System.register("TinyTypeView/ChangeWrapper", [], function (exports_5, context_5
                                 callback(instance, propName, arrayProperty);
                                 return result;
                             };
+                            var originalSlice = arrayProperty.slice;
+                            arrayProperty.slice = function () {
+                                var result = originalSlice.apply(this, arguments);
+                                callback(instance, propName, arrayProperty);
+                                return result;
+                            };
+                            var originalShift = arrayProperty.shift;
+                            arrayProperty.shift = function () {
+                                var result = originalShift.apply(this, arguments);
+                                callback(instance, propName, arrayProperty);
+                                return result;
+                            };
+                            var originalUnshift = arrayProperty.unshift;
+                            arrayProperty.unshift = function () {
+                                var result = originalUnshift.apply(this, arguments);
+                                callback(instance, propName, arrayProperty);
+                                return result;
+                            };
                         }
-                        else {
-                            instance["___" + propName] = instance[propName];
-                            delete instance[propName];
-                            Object.defineProperty(instance, propName, {
-                                get: function () {
-                                    return instance["___" + propName];
-                                },
-                                set: function (value) {
-                                    callback(instance, propName, value);
-                                    instance["___" + propName] = value;
-                                },
-                                enumerable: true,
-                                configurable: true
-                            });
-                        }
+                        instance["___" + propName] = instance[propName];
+                        delete instance[propName];
+                        Object.defineProperty(instance, propName, {
+                            get: function () {
+                                return instance["___" + propName];
+                            },
+                            set: function (value) {
+                                callback(instance, propName, value);
+                                instance["___" + propName] = value;
+                            },
+                            enumerable: true,
+                            configurable: true
+                        });
                     };
                     this.wrapped = wrappedItem;
                     for (var prop in this.wrapped) {

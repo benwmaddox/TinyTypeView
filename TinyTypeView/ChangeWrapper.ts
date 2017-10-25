@@ -32,25 +32,20 @@ export class ChangeWrapper<T>
                     var wrapper = new ChangeWrapper<any>(instance[propName][key], callback);
                     // this.wrapProperty(instance[propName], key, callback);
                 }
-                // else if (typeof instance[propName][key] === "function"){
-                //     var existingFunction = instance[propName][key];
-                //     delete instance[propName][key];
-                //     instance[propName][key] = function(a:any, b:any, c:any, d:any, e:any, f:any, g:any, h:any){
-                //         existingFunction(a,b,c,d,e,f,g,h);
-                //         callback(instance[propName], key, {a: a, b: b, c:c, d:d, e: e, f: f, g: g, h: h});
-                //     }
-                // }
             }
             var arrayProperty = <Array<any>> instance[propName];
+            //TODO: check to see if this array has its own properties, instead of prototype. Don't apply wrapper twice
+
             var originalPush = arrayProperty.push;
             arrayProperty.push = function(){
-                var result = originalPush.apply(this, arguments);                    
+                var result = originalPush.apply(this, arguments);          
+                // TODO: wire up new item as needed          
                 callback(instance, propName, arrayProperty);
                 return result;
             }
             var originalPop = arrayProperty.pop;
             arrayProperty.pop = function(){
-                var result = originalPop.apply(this, arguments);                    
+                var result = originalPop.apply(this, arguments);                                    
                 callback(instance, propName, arrayProperty);
                 return result;
             }
@@ -60,18 +55,26 @@ export class ChangeWrapper<T>
                 callback(instance, propName, arrayProperty);
                 return result;
             }
-            // var arrayProperty = instance[propName];
-            // for (var i = 0; i < arrayChangeFunctions.length; i++){
-            //     var functionKey = arrayChangeFunctions[i];
-            //     var existingFunction = <Function>arrayProperty[functionKey];
-            //     arrayProperty[functionKey] = function(){
-            //         var result = existingFunction.apply(this, arguments);                    
-            //         callback(arrayProperty, functionKey, arrayProperty);
-            //         return result;
-            //     }
-            // }
+            var originalSlice = arrayProperty.slice;
+            arrayProperty.slice = function(){
+                var result = originalSlice.apply(this, arguments);                    
+                callback(instance, propName, arrayProperty);
+                return result;
+            }
+            var originalShift = arrayProperty.shift;
+            arrayProperty.shift = function(){
+                var result = originalShift.apply(this, arguments);                    
+                callback(instance, propName, arrayProperty);
+                return result;
+            }
+            var originalUnshift = arrayProperty.unshift;
+            arrayProperty.unshift = function(){
+                var result = originalUnshift.apply(this, arguments);                    
+                callback(instance, propName, arrayProperty);
+                return result;
+            }
         }        
-        else {
+        // else {
             (<any>instance)["___"+propName] = instance[propName];
             delete instance[propName];
             Object.defineProperty(instance, propName, {
@@ -85,7 +88,7 @@ export class ChangeWrapper<T>
                 enumerable: true,
                 configurable: true
             });
-        }
+        // }
     }
     // public wrapFunction = (instance : any, propName : string,  callback: (item: T, propName: string, value: any) => void) => 
     // {
