@@ -1,15 +1,10 @@
-import { VirtualElement } from "./VirtualElement";
 import { ChangeWrapper } from "./ChangeWrapper";
 var TinyComponent = (function () {
     function TinyComponent() {
-        this.applyReactiveProperties();
         this.propertyChanged = false;
         this.childChanged = false;
         this.virtualElement = null;
     }
-    TinyComponent.prototype.virtualRender = function () {
-        this.virtualElement = new VirtualElement("div", {}, []);
-    };
     TinyComponent.prototype.applyReactiveProperties = function () {
         var _this = this;
         var a = new ChangeWrapper(this, function (item, propName, value) {

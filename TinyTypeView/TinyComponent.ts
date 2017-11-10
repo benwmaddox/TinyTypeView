@@ -2,11 +2,11 @@ import {VirtualElement} from "./VirtualElement"
 import {ChangeWrapper} from "./ChangeWrapper"
 
 export abstract class TinyComponent{
-    constructor(){
-        this.applyReactiveProperties();
+    constructor(){    
         this.propertyChanged = false;
         this.childChanged = false;
         this.virtualElement = null;
+
     }
     public propertyChanged : boolean;
     public childChanged : boolean;    
@@ -14,10 +14,7 @@ export abstract class TinyComponent{
     public parent : TinyComponent | null;
     [key: string]: any;
 
-    public virtualRender(){
-        this.virtualElement = new VirtualElement("div", {}, []);
-    }
-    
+    public abstract virtualRender() : VirtualElement;    
    
     public applyReactiveProperties() : void{
         var a = new ChangeWrapper(this, 
@@ -26,16 +23,18 @@ export abstract class TinyComponent{
                     if (this.beforePropertyChange){
                         this.beforePropertyChange(propName, value);                   
                     }
-
+                    this.propertyChanged = true;
+                    // TODO: apply changes?
                     if (this.afterPropertyChange){
                         this.afterPropertyChange(propName, value);
                     }
                 }
-            }
+            },
+            ["propertyChanged", "childChanged", "virtualElement", "parent", "beforePropertyChange", "afterPropertyChange"]
         )
     }
-    public abstract beforePropertyChange?(propName:string, value: any) : void;
-    public abstract afterPropertyChange?(propName:string, value: any) : void;
+    public abstract beforePropertyChange(propName:string, value: any) : void;
+    public abstract afterPropertyChange(propName:string, value: any) : void;
 }
 
 // Will need to walk to children and back up for virtual updates & real dom updates

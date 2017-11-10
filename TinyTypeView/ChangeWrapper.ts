@@ -1,13 +1,18 @@
 
 export class ChangeWrapper<T> 
 {
+    skipped: string[];
     public wrapped : T;
     /**
      *
      */
-    constructor(wrappedItem : T ,  callback: (item: T, propName: string, value: any) => void) {
+    constructor(wrappedItem : T ,  callback: (item: T, propName: string, value: any) => void, skippedElements: string[]) {
         this.wrapped = wrappedItem;
+        this.skipped = skippedElements;
         for (var prop in this.wrapped){
+            if (skippedElements.indexOf(prop) !== -1){
+                continue;
+            }
             // if (Array.isArray(this.wrapped) && typeof(this.wrapped[prop]) != "function")
             // {                
             //     (<any>this.wrapped)["___"+prop] = this.wrapped[prop];
@@ -23,13 +28,16 @@ export class ChangeWrapper<T>
     
     public wrapProperty = (instance : any, propName : string,  callback: (item: T, propName: string, value: any) => void) => 
     {
+        if (this.skipped.indexOf(propName) !== -1){
+            return;
+        }
         var arrayChangeFunctions = ['push', 'pop', 'splice'];
         if (Array.isArray(instance[propName])){
             for (var key in instance[propName]){
                 // this.wrapProperty(instance[propName], key, callback);
                 if (typeof instance[propName][key] === "object" && instance[propName][key] !== null){
                     //TODO: fix this, should be passing in properties for the new object
-                    var wrapper = new ChangeWrapper<any>(instance[propName][key], callback);
+                    var wrapper = new ChangeWrapper<any>(instance[propName][key], callback, this.skipped);
                     // this.wrapProperty(instance[propName], key, callback);
                 }
             }
