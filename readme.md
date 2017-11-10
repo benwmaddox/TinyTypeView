@@ -11,3 +11,10 @@ Representation of each html node. There are helper functions for every tag recog
 ### Render
 Takes the virtual elements and updates the DOM.
 
+
+# Additional Setup Requirements
+npm install rollup --global 
+
+# Compact compilation:
+tsc
+rollup main.js --o bundle.js --f iife

@@ -19,7 +19,8 @@ export function v (elementTag : keyof ElementTagNameMap, attributes?: any | null
 
 export type Attribute<T extends HTMLElement> = {    
     [P in keyof T]?: T[P];
-} 
+}
+//TODO: add behavior for *-* attributes 
 
 // type VirtualElementRender  = {    
 //     [P in keyof T]?: T[P];
