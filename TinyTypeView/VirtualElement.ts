@@ -4,7 +4,7 @@ export class VirtualElement{
     public children?:VirtualElement[] | string | null;
     public element : HTMLElement | null; // Should only be used during rendering
 
-    constructor(elementTag : keyof ElementTagNameMap, attributes?: any| null , children?: VirtualElement[] | null | string ) { //| VirtualElement
+    constructor(elementTag : keyof ElementTagNameMap, attributes?: any | null , children?: VirtualElement[] | null | string ) { //| VirtualElement
         this.elementTag = elementTag;
         this.attributes = attributes;
         this.children = children;    
