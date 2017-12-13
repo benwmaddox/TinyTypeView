@@ -60,16 +60,17 @@ export class SampleComponent extends TinyComponent{
 var sampleModel = new SampleComponent();
 var root = new TinyRoot(sampleModel);
 var renderer = new OneTimeRenderer();
+var diffRenderer = new DiffRenderer(render);;
 var node = document.createElement('div');
 document.body.appendChild(node);
 function render(){    
-    var result = OneTimeRenderer.Render(root.component.virtualRender(), (a) => {render()})
-    if (node.childNodes.length > 0){
-        node.removeChild(node.children[0])
-    }
-    node.appendChild(result);
-    // var newVM = root(mainModel);
-    // diffRender.Render(node, null, newVM, true)    
+    // var result = OneTimeRenderer.Render(root.component.virtualRender(), (a) => {render()})
+    // if (node.childNodes.length > 0){
+    //     node.removeChild(node.children[0])
+    // }
+    // node.appendChild(result);
+    
+     diffRenderer.Render(node, null, root.component.virtualRender(), true)    
 }
 
 render();

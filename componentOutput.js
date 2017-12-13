@@ -521,17 +521,13 @@ System.register("TinyTypeView/OneTimeRenderer", ["TinyTypeView/VirtualElement"],
         }
     };
 });
-System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyComponent", "TinyTypeView/OneTimeRenderer"], function (exports_7, context_7) {
+System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyComponent", "TinyTypeView/DiffRenderer", "TinyTypeView/OneTimeRenderer"], function (exports_7, context_7) {
     "use strict";
     var __moduleName = context_7 && context_7.id;
     function render() {
-        var result = OneTimeRenderer_1.OneTimeRenderer.Render(root.component.virtualRender(), function (a) { render(); });
-        if (node.childNodes.length > 0) {
-            node.removeChild(node.children[0]);
-        }
-        node.appendChild(result);
+        diffRenderer.Render(node, null, root.component.virtualRender(), true);
     }
-    var HtmlTypes_1, TinyComponent_1, OneTimeRenderer_1, SampleComponent, sampleModel, root, renderer, node;
+    var HtmlTypes_1, TinyComponent_1, DiffRenderer_1, OneTimeRenderer_1, SampleComponent, sampleModel, root, renderer, diffRenderer, node;
     return {
         setters: [
             function (HtmlTypes_1_1) {
@@ -539,6 +535,9 @@ System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyCo
             },
             function (TinyComponent_1_1) {
                 TinyComponent_1 = TinyComponent_1_1;
+            },
+            function (DiffRenderer_1_1) {
+                DiffRenderer_1 = DiffRenderer_1_1;
             },
             function (OneTimeRenderer_1_1) {
                 OneTimeRenderer_1 = OneTimeRenderer_1_1;
@@ -571,6 +570,8 @@ System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyCo
             sampleModel = new SampleComponent();
             root = new TinyComponent_1.TinyRoot(sampleModel);
             renderer = new OneTimeRenderer_1.OneTimeRenderer();
+            diffRenderer = new DiffRenderer_1.DiffRenderer(render);
+            ;
             node = document.createElement('div');
             document.body.appendChild(node);
             render();
