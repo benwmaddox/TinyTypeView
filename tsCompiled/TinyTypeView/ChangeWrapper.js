@@ -1,11 +1,15 @@
 var ChangeWrapper = (function () {
-    function ChangeWrapper(wrappedItem, callback) {
+    function ChangeWrapper(wrappedItem, callback, skippedElements) {
+        var _this = this;
         this.wrapProperty = function (instance, propName, callback) {
+            if (_this.skipped.indexOf(propName) !== -1) {
+                return;
+            }
             var arrayChangeFunctions = ['push', 'pop', 'splice'];
             if (Array.isArray(instance[propName])) {
                 for (var key in instance[propName]) {
                     if (typeof instance[propName][key] === "object" && instance[propName][key] !== null) {
-                        var wrapper = new ChangeWrapper(instance[propName][key], callback);
+                        var wrapper = new ChangeWrapper(instance[propName][key], callback, _this.skipped);
                     }
                 }
                 var arrayProperty = instance[propName];
@@ -61,7 +65,11 @@ var ChangeWrapper = (function () {
             });
         };
         this.wrapped = wrappedItem;
+        this.skipped = skippedElements;
         for (var prop in this.wrapped) {
+            if (skippedElements.indexOf(prop) !== -1) {
+                continue;
+            }
             if (typeof (this.wrapped[prop]) != "function") {
                 this.wrapProperty(this.wrapped, prop, callback);
             }

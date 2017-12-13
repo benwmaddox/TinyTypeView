@@ -98,4 +98,4 @@ function render() {
     diffRender.Render(node, null, newVM, true);
 }
 render();
-var wrapper = new ChangeWrapper(mainModel, function (item, prop, value) { console.log(prop + ": " + value); });
+var wrapper = new ChangeWrapper(mainModel, function (item, prop, value) { console.log(prop + ": " + value); }, []);

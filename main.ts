@@ -118,5 +118,5 @@ function render(){
 
 render();
 
-var wrapper = new ChangeWrapper(mainModel, (item, prop, value) => { console.log(prop + ": " + value )});
+var wrapper = new ChangeWrapper(mainModel, (item, prop, value) => { console.log(prop + ": " + value )}, []);
 

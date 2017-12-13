@@ -310,7 +310,7 @@ System.register("TinyTypeView/ChangeWrapper", [], function (exports_3, context_3
 System.register("TinyTypeView/TinyComponent", ["TinyTypeView/ChangeWrapper"], function (exports_4, context_4) {
     "use strict";
     var __moduleName = context_4 && context_4.id;
-    var ChangeWrapper_1, TinyComponent;
+    var ChangeWrapper_1, TinyComponent, TinyRoot;
     return {
         setters: [
             function (ChangeWrapper_1_1) {
@@ -332,6 +332,9 @@ System.register("TinyTypeView/TinyComponent", ["TinyTypeView/ChangeWrapper"], fu
                                 _this.beforePropertyChange(propName, value);
                             }
                             _this.propertyChanged = true;
+                            if (value instanceof TinyComponent) {
+                                value.applyReactiveProperties();
+                            }
                             if (_this.afterPropertyChange) {
                                 _this.afterPropertyChange(propName, value);
                             }
@@ -341,6 +344,14 @@ System.register("TinyTypeView/TinyComponent", ["TinyTypeView/ChangeWrapper"], fu
                 return TinyComponent;
             }());
             exports_4("TinyComponent", TinyComponent);
+            TinyRoot = (function () {
+                function TinyRoot(component) {
+                    this.component = component;
+                    this.component.applyReactiveProperties();
+                }
+                return TinyRoot;
+            }());
+            exports_4("TinyRoot", TinyRoot);
         }
     };
 });
@@ -514,13 +525,13 @@ System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyCo
     "use strict";
     var __moduleName = context_7 && context_7.id;
     function render() {
-        var result = OneTimeRenderer_1.OneTimeRenderer.Render(mainModel.virtualRender(), function (a) { render(); });
+        var result = OneTimeRenderer_1.OneTimeRenderer.Render(root.component.virtualRender(), function (a) { render(); });
         if (node.childNodes.length > 0) {
             node.removeChild(node.children[0]);
         }
         node.appendChild(result);
     }
-    var HtmlTypes_1, TinyComponent_1, OneTimeRenderer_1, SampleComponent, mainModel, renderer, node;
+    var HtmlTypes_1, TinyComponent_1, OneTimeRenderer_1, SampleComponent, sampleModel, root, renderer, node;
     return {
         setters: [
             function (HtmlTypes_1_1) {
@@ -537,12 +548,11 @@ System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyCo
             SampleComponent = (function (_super) {
                 __extends(SampleComponent, _super);
                 function SampleComponent() {
-                    var _this = _super.call(this) || this;
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
+                    _this.incremental = 0;
                     _this.increase = function () {
                         _this.incremental++;
                     };
-                    _this.incremental = 0;
-                    _this.applyReactiveProperties();
                     return _this;
                 }
                 SampleComponent.prototype.virtualRender = function () {
@@ -555,14 +565,11 @@ System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyCo
                     }
                     return this.virtualElement;
                 };
-                SampleComponent.prototype.beforePropertyChange = function (propName, value) {
-                };
-                SampleComponent.prototype.afterPropertyChange = function (propName, value) {
-                };
                 return SampleComponent;
             }(TinyComponent_1.TinyComponent));
             exports_7("SampleComponent", SampleComponent);
-            mainModel = new SampleComponent();
+            sampleModel = new SampleComponent();
+            root = new TinyComponent_1.TinyRoot(sampleModel);
             renderer = new OneTimeRenderer_1.OneTimeRenderer();
             node = document.createElement('div');
             document.body.appendChild(node);

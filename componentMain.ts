@@ -1,17 +1,12 @@
 import {a, div, button, input, select, option, h1} from "./TinyTypeView/HtmlTypes"
 import {VirtualElement} from "./TinyTypeView/VirtualElement"
-import {TinyComponent} from "./TinyTypeView/TinyComponent"
+import {TinyComponent, TinyRoot} from "./TinyTypeView/TinyComponent"
 import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
 import {OneTimeRenderer} from "./TinyTypeView/OneTimeRenderer"
 
 export class SampleComponent extends TinyComponent{
-    incremental : number;
-    constructor () {        
-        super();
+    incremental : number = 0;
 
-        this.incremental = 0;
-        this.applyReactiveProperties();
-    }
     increase = () => {
         this.incremental++;
     }
@@ -28,12 +23,12 @@ export class SampleComponent extends TinyComponent{
         return this.virtualElement;
     }
     
-    public beforePropertyChange(propName: string, value: any): void {
-        // throw new Error("Method not implemented.");
-    }
-    public afterPropertyChange(propName: string, value: any): void {
-        // throw new Error("Method not implemented.");
-    }
+    // public beforePropertyChange(propName: string, value: any): void {
+    //     // throw new Error("Method not implemented.");
+    // }
+    // public afterPropertyChange(propName: string, value: any): void {
+    //     // throw new Error("Method not implemented.");
+    // }
 
 }
 
@@ -62,12 +57,13 @@ export class SampleComponent extends TinyComponent{
 // mainModel.selectionIndex = -1;
 // var diffRender = new DiffRenderer(render);
 
-var mainModel = new SampleComponent();
+var sampleModel = new SampleComponent();
+var root = new TinyRoot(sampleModel);
 var renderer = new OneTimeRenderer();
 var node = document.createElement('div');
 document.body.appendChild(node);
 function render(){    
-    var result = OneTimeRenderer.Render(mainModel.virtualRender(), (a) => {render()})
+    var result = OneTimeRenderer.Render(root.component.virtualRender(), (a) => {render()})
     if (node.childNodes.length > 0){
         node.removeChild(node.children[0])
     }
