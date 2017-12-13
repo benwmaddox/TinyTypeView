@@ -42,11 +42,11 @@ export abstract class TinyComponent{
     public applyReactiveProperties() : void{
         var a = new ChangeWrapper(this, 
             (item, propName : string, value : any) : void => {
-                if (this[propName]  !== value){
+                if (item[propName]  !== value){
                     // if (this.beforePropertyChange){
                     //     this.beforePropertyChange(propName, value);                   
                     // }
-                    this.propertyChanged = true;
+                    item.propertyChanged = true;
                     if (value instanceof TinyComponent) {
                         value.applyReactiveProperties();
                     }

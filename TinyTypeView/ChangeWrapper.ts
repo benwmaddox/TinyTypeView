@@ -20,7 +20,7 @@ export class ChangeWrapper<T>
             //     this.wrapFunction(this.wrapped, prop, callback);                
             // }
             // else 
-            if (typeof(this.wrapped[prop]) != "function") {
+            if (typeof(this.wrapped[prop]) != "function" && (prop.length < 2 || prop.substr(0,2) != "__")) {
                 this.wrapProperty(this.wrapped, prop, callback);
             }
         }

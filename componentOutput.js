@@ -291,7 +291,7 @@ System.register("TinyTypeView/ChangeWrapper", [], function (exports_3, context_3
                         if (skippedElements.indexOf(prop) !== -1) {
                             continue;
                         }
-                        if (typeof (this.wrapped[prop]) != "function") {
+                        if (typeof (this.wrapped[prop]) != "function" && (prop.length < 2 || prop.substr(0, 2) != "__")) {
                             this.wrapProperty(this.wrapped, prop, callback);
                         }
                     }
@@ -354,10 +354,9 @@ System.register("TinyTypeView/TinyComponent", ["TinyTypeView/VirtualElement", "T
                     return this.virtualElement;
                 };
                 TinyComponent.prototype.applyReactiveProperties = function () {
-                    var _this = this;
                     var a = new ChangeWrapper_1.ChangeWrapper(this, function (item, propName, value) {
-                        if (_this[propName] !== value) {
-                            _this.propertyChanged = true;
+                        if (item[propName] !== value) {
+                            item.propertyChanged = true;
                             if (value instanceof TinyComponent) {
                                 value.applyReactiveProperties();
                             }
