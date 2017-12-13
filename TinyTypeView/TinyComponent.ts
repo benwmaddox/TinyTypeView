@@ -15,6 +15,21 @@ export abstract class TinyComponent{
     public parent : TinyComponent | null;
     [key: string]: any;
 
+    public renderComponents(components : TinyComponent[]): VirtualElement[] {
+        var results : VirtualElement[] = [];
+        for (var i = 0; i < components.length; i++) {
+            var render = components[i].render();
+            if (render instanceof VirtualElement){
+                results.push(render);
+            }
+            else{
+                for (var j = 0; j < render.length;j++){
+                    results.push(render[j]);
+                }
+            }
+        }
+        return results;
+    }
     public render() : VirtualElement | VirtualElement[]{        
         if (this.virtualElement === null || this.childChanged || this.propertyChanged){
             this.virtualElement = this.virtualRender();
@@ -27,18 +42,28 @@ export abstract class TinyComponent{
     public applyReactiveProperties() : void{
         var a = new ChangeWrapper(this, 
             (item, propName : string, value : any) : void => {
-                if (this[propName] !== value){
-                    if (this.beforePropertyChange){
-                        this.beforePropertyChange(propName, value);                   
-                    }
+                if (this[propName]  !== value){
+                    // if (this.beforePropertyChange){
+                    //     this.beforePropertyChange(propName, value);                   
+                    // }
                     this.propertyChanged = true;
                     if (value instanceof TinyComponent) {
                         value.applyReactiveProperties();
                     }
-                    // TODO: apply changes?
-                    if (this.afterPropertyChange){
-                        this.afterPropertyChange(propName, value);
+                    if (Array.isArray(value)){
+                        for (var i = 0; i < value.length; i++){
+                            if (value[i] instanceof TinyComponent){
+                                value[i].applyReactiveProperties();
+                            }
+                            else {
+                                break;
+                            }
+                        }
                     }
+                    // TODO: apply changes?
+                    // if (this.afterPropertyChange){
+                    //     this.afterPropertyChange(propName, value);
+                    // }
                 }
             },
             ["propertyChanged", "childChanged", "virtualElement", "parent", "beforePropertyChange", "afterPropertyChange"]

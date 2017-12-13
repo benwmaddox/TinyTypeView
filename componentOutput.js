@@ -225,7 +225,6 @@ System.register("TinyTypeView/ChangeWrapper", [], function (exports_3, context_3
                         if (_this.skipped.indexOf(propName) !== -1) {
                             return;
                         }
-                        var arrayChangeFunctions = ['push', 'pop', 'splice'];
                         if (Array.isArray(instance[propName])) {
                             for (var key in instance[propName]) {
                                 if (typeof instance[propName][key] === "object" && instance[propName][key] !== null) {
@@ -234,39 +233,41 @@ System.register("TinyTypeView/ChangeWrapper", [], function (exports_3, context_3
                             }
                             var arrayProperty = instance[propName];
                             var originalPush = arrayProperty.push;
+                            var originalSkipped = _this.skipped;
                             arrayProperty.push = function () {
+                                callback(instance, propName, arguments[0]);
                                 var result = originalPush.apply(this, arguments);
-                                callback(instance, propName, arrayProperty);
+                                var wrapper = new ChangeWrapper(arguments[0], callback, originalSkipped);
                                 return result;
                             };
                             var originalPop = arrayProperty.pop;
                             arrayProperty.pop = function () {
-                                var result = originalPop.apply(this, arguments);
                                 callback(instance, propName, arrayProperty);
+                                var result = originalPop.apply(this, arguments);
                                 return result;
                             };
                             var originalSplice = arrayProperty.splice;
                             arrayProperty.splice = function () {
-                                var result = originalSplice.apply(this, arguments);
                                 callback(instance, propName, arrayProperty);
+                                var result = originalSplice.apply(this, arguments);
                                 return result;
                             };
                             var originalSlice = arrayProperty.slice;
                             arrayProperty.slice = function () {
-                                var result = originalSlice.apply(this, arguments);
                                 callback(instance, propName, arrayProperty);
+                                var result = originalSlice.apply(this, arguments);
                                 return result;
                             };
                             var originalShift = arrayProperty.shift;
                             arrayProperty.shift = function () {
-                                var result = originalShift.apply(this, arguments);
                                 callback(instance, propName, arrayProperty);
+                                var result = originalShift.apply(this, arguments);
                                 return result;
                             };
                             var originalUnshift = arrayProperty.unshift;
                             arrayProperty.unshift = function () {
-                                var result = originalUnshift.apply(this, arguments);
                                 callback(instance, propName, arrayProperty);
+                                var result = originalUnshift.apply(this, arguments);
                                 return result;
                             };
                         }
@@ -330,6 +331,21 @@ System.register("TinyTypeView/TinyComponent", ["TinyTypeView/VirtualElement", "T
                     this.childChanged = false;
                     this.virtualElement = null;
                 }
+                TinyComponent.prototype.renderComponents = function (components) {
+                    var results = [];
+                    for (var i = 0; i < components.length; i++) {
+                        var render = components[i].render();
+                        if (render instanceof VirtualElement_2.VirtualElement) {
+                            results.push(render);
+                        }
+                        else {
+                            for (var j = 0; j < render.length; j++) {
+                                results.push(render[j]);
+                            }
+                        }
+                    }
+                    return results;
+                };
                 TinyComponent.prototype.render = function () {
                     if (this.virtualElement === null || this.childChanged || this.propertyChanged) {
                         this.virtualElement = this.virtualRender();
@@ -341,15 +357,19 @@ System.register("TinyTypeView/TinyComponent", ["TinyTypeView/VirtualElement", "T
                     var _this = this;
                     var a = new ChangeWrapper_1.ChangeWrapper(this, function (item, propName, value) {
                         if (_this[propName] !== value) {
-                            if (_this.beforePropertyChange) {
-                                _this.beforePropertyChange(propName, value);
-                            }
                             _this.propertyChanged = true;
                             if (value instanceof TinyComponent) {
                                 value.applyReactiveProperties();
                             }
-                            if (_this.afterPropertyChange) {
-                                _this.afterPropertyChange(propName, value);
+                            if (Array.isArray(value)) {
+                                for (var i = 0; i < value.length; i++) {
+                                    if (value[i] instanceof TinyComponent) {
+                                        value[i].applyReactiveProperties();
+                                    }
+                                    else {
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }, ["propertyChanged", "childChanged", "virtualElement", "parent", "beforePropertyChange", "afterPropertyChange"]);
@@ -396,6 +416,9 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
                 DiffRenderer.prototype.Render = function (htmlElement, oldVe, ve, root) {
                     if (root === void 0) { root = true; }
                     var oldVe = (root && this.lastVirtualElement) ? this.lastVirtualElement : oldVe;
+                    if (oldVe === ve) {
+                        return htmlElement;
+                    }
                     if (ve.children) {
                         if (typeof (ve.children) == "string") {
                             if (htmlElement.childNodes.length == 0) {
@@ -526,7 +549,7 @@ System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyCo
     function render() {
         diffRenderer.Render(node, null, root.render(), true);
     }
-    var HtmlTypes_2, TinyComponent_1, DiffRenderer_1, ComponentRenderer_1, SampleComponent, sampleModel, root, diffRenderer, componentRenderer, node;
+    var HtmlTypes_2, TinyComponent_1, DiffRenderer_1, ComponentRenderer_1, NameItemComponent, SampleComponent, sampleModel, root, diffRenderer, componentRenderer, node;
     return {
         setters: [
             function (HtmlTypes_2_1) {
@@ -543,21 +566,46 @@ System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyCo
             }
         ],
         execute: function () {
+            NameItemComponent = (function (_super) {
+                __extends(NameItemComponent, _super);
+                function NameItemComponent(name) {
+                    var _this = _super.call(this) || this;
+                    _this.name = "";
+                    _this.appendToName = function () {
+                        _this.name += " : ) ";
+                    };
+                    _this.name = name;
+                    return _this;
+                }
+                NameItemComponent.prototype.virtualRender = function () {
+                    return HtmlTypes_2.li({}, [
+                        HtmlTypes_2.span(null, this.name + " "),
+                        HtmlTypes_2.button({ onclick: this.appendToName }, "More smiles")
+                    ]);
+                };
+                return NameItemComponent;
+            }(TinyComponent_1.TinyComponent));
+            exports_7("NameItemComponent", NameItemComponent);
             SampleComponent = (function (_super) {
                 __extends(SampleComponent, _super);
                 function SampleComponent() {
                     var _this = _super !== null && _super.apply(this, arguments) || this;
                     _this.incremental = 0;
+                    _this.nameItems = [];
                     _this.increase = function () {
                         _this.incremental++;
+                    };
+                    _this.addNumberedChild = function () {
+                        _this.nameItems.push(new NameItemComponent("Child # " + _this.incremental));
                     };
                     return _this;
                 }
                 SampleComponent.prototype.virtualRender = function () {
                     return HtmlTypes_2.div({}, [
                         HtmlTypes_2.div({}, this.incremental.toString()),
-                        HtmlTypes_2.button({ onclick: this.increase }, "Increase!")
-                    ]);
+                        HtmlTypes_2.button({ onclick: this.increase }, "Increase!"),
+                        HtmlTypes_2.button({ onclick: this.addNumberedChild }, "Add Child"),
+                    ].concat(this.renderComponents(this.nameItems)));
                 };
                 return SampleComponent;
             }(TinyComponent_1.TinyComponent));

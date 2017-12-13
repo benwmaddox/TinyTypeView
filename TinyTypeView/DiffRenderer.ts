@@ -8,7 +8,9 @@ export class DiffRenderer{
     public lastVirtualElement : VirtualElement | null = null;
     public Render(htmlElement : HTMLElement, oldVe : VirtualElement | null, ve : VirtualElement, root: boolean = true) : HTMLElement {
         var oldVe = (root && this.lastVirtualElement) ? this.lastVirtualElement : oldVe;
-
+        if (oldVe === ve){
+            return htmlElement;
+        }
         if (ve.children){       
             if ( typeof(ve.children) == "string") {
                 if (htmlElement.childNodes.length == 0){

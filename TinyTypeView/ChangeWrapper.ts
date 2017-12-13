@@ -31,7 +31,7 @@ export class ChangeWrapper<T>
         if (this.skipped.indexOf(propName) !== -1){
             return;
         }
-        var arrayChangeFunctions = ['push', 'pop', 'splice'];
+        // var arrayChangeFunctions = ['push', 'pop', 'splice'];
         if (Array.isArray(instance[propName])){
             for (var key in instance[propName]){
                 // this.wrapProperty(instance[propName], key, callback);
@@ -45,40 +45,41 @@ export class ChangeWrapper<T>
             //TODO: check to see if this array has its own properties, instead of prototype. Don't apply wrapper twice
 
             var originalPush = arrayProperty.push;
-            arrayProperty.push = function(){
-                var result = originalPush.apply(this, arguments);          
-                // TODO: wire up new item as needed          
-                callback(instance, propName, arrayProperty);
+            var originalSkipped = this.skipped;
+            arrayProperty.push = function(){                               
+                callback(instance, propName, arguments[0]);
+                var result = originalPush.apply(this, arguments);    
+                var wrapper = new ChangeWrapper<any>(arguments[0], callback, originalSkipped);       
                 return result;
             }
             var originalPop = arrayProperty.pop;
-            arrayProperty.pop = function(){
-                var result = originalPop.apply(this, arguments);                                    
+            arrayProperty.pop = function(){                                
                 callback(instance, propName, arrayProperty);
+                var result = originalPop.apply(this, arguments);    
                 return result;
             }
             var originalSplice = arrayProperty.splice;
-            arrayProperty.splice = function(){
-                var result = originalSplice.apply(this, arguments);                    
+            arrayProperty.splice = function(){                    
                 callback(instance, propName, arrayProperty);
+                var result = originalSplice.apply(this, arguments);
                 return result;
             }
             var originalSlice = arrayProperty.slice;
-            arrayProperty.slice = function(){
-                var result = originalSlice.apply(this, arguments);                    
-                callback(instance, propName, arrayProperty);
+            arrayProperty.slice = function(){                 
+                callback(instance, propName, arrayProperty); 
+                var result = originalSlice.apply(this, arguments);  
                 return result;
             }
             var originalShift = arrayProperty.shift;
-            arrayProperty.shift = function(){
-                var result = originalShift.apply(this, arguments);                    
+            arrayProperty.shift = function(){                  
                 callback(instance, propName, arrayProperty);
+                var result = originalShift.apply(this, arguments);  
                 return result;
             }
             var originalUnshift = arrayProperty.unshift;
-            arrayProperty.unshift = function(){
-                var result = originalUnshift.apply(this, arguments);                    
+            arrayProperty.unshift = function(){                 
                 callback(instance, propName, arrayProperty);
+                var result = originalUnshift.apply(this, arguments);   
                 return result;
             }
         }        

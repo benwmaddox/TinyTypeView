@@ -1,22 +1,50 @@
-import {a, div, button, input, select, option, h1} from "./TinyTypeView/HtmlTypes"
+import {a, div, button, input, select, option, h1, li, span} from "./TinyTypeView/HtmlTypes"
 import {VirtualElement} from "./TinyTypeView/VirtualElement"
 import {TinyComponent, TinyRoot} from "./TinyTypeView/TinyComponent"
  import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
 // import {OneTimeRenderer} from "./TinyTypeView/OneTimeRenderer"
 import { ComponentRenderer } from "./TinyTypeView/ComponentRenderer";
 
+
+export class NameItemComponent extends TinyComponent{
+    public name : string = "";
+    constructor(name : string) {
+        super();
+        this.name = name;
+    }
+
+    appendToName = () => {
+        this.name += " : ) ";
+    }
+
+    public virtualRender(): VirtualElement | VirtualElement[] {
+        return li({}, [
+            span(null,this.name + " "), 
+            button({onclick: this.appendToName}, "More smiles")
+        ]);
+    }
+    
+}
 export class SampleComponent extends TinyComponent{
     incremental : number = 0;
+    nameItems : NameItemComponent[] = [];
 
     increase = () => {
         this.incremental++;
     }
+    addNumberedChild = () => {
+        this.nameItems.push(new NameItemComponent("Child # " + this.incremental))
+    }
 
     public virtualRender() : VirtualElement {
+        // var childRenders = this.nameItems.map(x => x.render());
+        // var elements = [];
+
         return div({}, [
                 div({}, this.incremental.toString()), 
-                button({onclick: this.increase}, "Increase!")
-            ]);
+                button({onclick: this.increase}, "Increase!"),
+                button({onclick: this.addNumberedChild}, "Add Child"),                
+            ].concat(this.renderComponents(this.nameItems)));
     }
     
     // public beforePropertyChange(propName: string, value: any): void {
@@ -27,6 +55,7 @@ export class SampleComponent extends TinyComponent{
     // }
 
 }
+
 
 // var root = (model: TestModel) =>
 //     div(null, [
