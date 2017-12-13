@@ -9,11 +9,19 @@ export abstract class TinyComponent{
         this.virtualElement = null;
         // this.applyReactiveProperties();
     }
+    public markPropertyChanged(){
+        this.propertyChanged = true;        
+        var parent = this.parent;
+        while (parent != null && parent.childChanged == false){
+            parent.childChanged = true;
+            parent = parent.parent;
+        }
+    }
     public propertyChanged : boolean;
     public childChanged : boolean;    
     public virtualElement : VirtualElement |VirtualElement[]| null;
     public parent : TinyComponent | null;
-    [key: string]: any;
+    // [key: string]: any;
 
     public renderComponents(components : TinyComponent[]): VirtualElement[] {
         var results : VirtualElement[] = [];
@@ -34,6 +42,7 @@ export abstract class TinyComponent{
         if (this.virtualElement === null || this.childChanged || this.propertyChanged){
             this.virtualElement = this.virtualRender();
             this.propertyChanged = false;
+            this.childChanged = false;
         }
         return this.virtualElement;
     }
@@ -41,19 +50,21 @@ export abstract class TinyComponent{
    
     public applyReactiveProperties() : void{
         var a = new ChangeWrapper(this, 
-            (item, propName : string, value : any) : void => {
+            (item : any, propName : string, value : any) : void => {
                 if (item[propName]  !== value){
                     // if (this.beforePropertyChange){
                     //     this.beforePropertyChange(propName, value);                   
                     // }
-                    item.propertyChanged = true;
+                    item.markPropertyChanged()
                     if (value instanceof TinyComponent) {
                         value.applyReactiveProperties();
+                        value.parent = item;
                     }
                     if (Array.isArray(value)){
                         for (var i = 0; i < value.length; i++){
                             if (value[i] instanceof TinyComponent){
                                 value[i].applyReactiveProperties();
+                                value[i].parent = item;
                             }
                             else {
                                 break;
