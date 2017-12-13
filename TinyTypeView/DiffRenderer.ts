@@ -6,8 +6,8 @@ export class DiffRenderer{
         this.eventListener = eventListener;        
     }
     public lastVirtualElement : VirtualElement | null = null;
-    public Render(htmlElement : HTMLElement, oldVe : VirtualElement | null, ve : VirtualElement, initial: boolean = true) : HTMLElement {
-        var oldVe = (initial && this.lastVirtualElement) ? this.lastVirtualElement : oldVe;
+    public Render(htmlElement : HTMLElement, oldVe : VirtualElement | null, ve : VirtualElement, root: boolean = true) : HTMLElement {
+        var oldVe = (root && this.lastVirtualElement) ? this.lastVirtualElement : oldVe;
 
         if (ve.children){       
             if ( typeof(ve.children) == "string") {
@@ -96,7 +96,7 @@ export class DiffRenderer{
                 }
             }      
         }
-        if (initial){
+        if (root){
             this.lastVirtualElement = ve;
         }
         return htmlElement;

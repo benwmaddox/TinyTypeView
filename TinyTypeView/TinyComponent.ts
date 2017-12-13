@@ -1,5 +1,6 @@
 import {VirtualElement} from "./VirtualElement"
 import {ChangeWrapper} from "./ChangeWrapper"
+import { div } from "./HtmlTypes";
 
 export abstract class TinyComponent{
     constructor(){    
@@ -10,11 +11,18 @@ export abstract class TinyComponent{
     }
     public propertyChanged : boolean;
     public childChanged : boolean;    
-    public virtualElement : VirtualElement | null;
+    public virtualElement : VirtualElement |VirtualElement[]| null;
     public parent : TinyComponent | null;
     [key: string]: any;
 
-    public abstract virtualRender() : VirtualElement;    
+    public render() : VirtualElement | VirtualElement[]{        
+        if (this.virtualElement === null || this.childChanged || this.propertyChanged){
+            this.virtualElement = this.virtualRender();
+            this.propertyChanged = false;
+        }
+        return this.virtualElement;
+    }
+    public abstract virtualRender() : VirtualElement | VirtualElement[];    
    
     public applyReactiveProperties() : void{
         var a = new ChangeWrapper(this, 
@@ -46,7 +54,15 @@ export class TinyRoot {
         this.component = component;
         this.component.applyReactiveProperties();
     }
-
+    public render() : VirtualElement {
+        var rendered = this.component.render();
+        if (rendered instanceof VirtualElement){
+            return rendered;
+        }
+        else {
+            return div({},rendered);
+        }
+    }
 }
 // Will need to walk to children and back up for virtual updates & real dom updates
 

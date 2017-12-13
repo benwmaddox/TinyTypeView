@@ -1,8 +1,9 @@
 import {a, div, button, input, select, option, h1} from "./TinyTypeView/HtmlTypes"
 import {VirtualElement} from "./TinyTypeView/VirtualElement"
 import {TinyComponent, TinyRoot} from "./TinyTypeView/TinyComponent"
-import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
-import {OneTimeRenderer} from "./TinyTypeView/OneTimeRenderer"
+ import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
+// import {OneTimeRenderer} from "./TinyTypeView/OneTimeRenderer"
+import { ComponentRenderer } from "./TinyTypeView/ComponentRenderer";
 
 export class SampleComponent extends TinyComponent{
     incremental : number = 0;
@@ -12,15 +13,10 @@ export class SampleComponent extends TinyComponent{
     }
 
     public virtualRender() : VirtualElement {
-        if (this.virtualElement === null || this.childChanged || this.propertyChanged){
-            this.virtualElement = div({}, [
+        return div({}, [
                 div({}, this.incremental.toString()), 
                 button({onclick: this.increase}, "Increase!")
             ]);
-            this.propertyChanged = false;
-        }
-
-        return this.virtualElement;
     }
     
     // public beforePropertyChange(propName: string, value: any): void {
@@ -59,8 +55,9 @@ export class SampleComponent extends TinyComponent{
 
 var sampleModel = new SampleComponent();
 var root = new TinyRoot(sampleModel);
-var renderer = new OneTimeRenderer();
-var diffRenderer = new DiffRenderer(render);;
+// var renderer = new OneTimeRenderer();
+var diffRenderer = new DiffRenderer(render);
+var componentRenderer = new ComponentRenderer();
 var node = document.createElement('div');
 document.body.appendChild(node);
 function render(){    
@@ -70,7 +67,8 @@ function render(){
     // }
     // node.appendChild(result);
     
-     diffRenderer.Render(node, null, root.component.virtualRender(), true)    
+     diffRenderer.Render(node, null, root.render(), true)    
+    //  componentRenderer.Render(root.component);
 }
 
 render();

@@ -307,14 +307,20 @@ System.register("TinyTypeView/ChangeWrapper", [], function (exports_3, context_3
         }
     };
 });
-System.register("TinyTypeView/TinyComponent", ["TinyTypeView/ChangeWrapper"], function (exports_4, context_4) {
+System.register("TinyTypeView/TinyComponent", ["TinyTypeView/VirtualElement", "TinyTypeView/ChangeWrapper", "TinyTypeView/HtmlTypes"], function (exports_4, context_4) {
     "use strict";
     var __moduleName = context_4 && context_4.id;
-    var ChangeWrapper_1, TinyComponent, TinyRoot;
+    var VirtualElement_2, ChangeWrapper_1, HtmlTypes_1, TinyComponent, TinyRoot;
     return {
         setters: [
+            function (VirtualElement_2_1) {
+                VirtualElement_2 = VirtualElement_2_1;
+            },
             function (ChangeWrapper_1_1) {
                 ChangeWrapper_1 = ChangeWrapper_1_1;
+            },
+            function (HtmlTypes_1_1) {
+                HtmlTypes_1 = HtmlTypes_1_1;
             }
         ],
         execute: function () {
@@ -324,6 +330,13 @@ System.register("TinyTypeView/TinyComponent", ["TinyTypeView/ChangeWrapper"], fu
                     this.childChanged = false;
                     this.virtualElement = null;
                 }
+                TinyComponent.prototype.render = function () {
+                    if (this.virtualElement === null || this.childChanged || this.propertyChanged) {
+                        this.virtualElement = this.virtualRender();
+                        this.propertyChanged = false;
+                    }
+                    return this.virtualElement;
+                };
                 TinyComponent.prototype.applyReactiveProperties = function () {
                     var _this = this;
                     var a = new ChangeWrapper_1.ChangeWrapper(this, function (item, propName, value) {
@@ -349,6 +362,15 @@ System.register("TinyTypeView/TinyComponent", ["TinyTypeView/ChangeWrapper"], fu
                     this.component = component;
                     this.component.applyReactiveProperties();
                 }
+                TinyRoot.prototype.render = function () {
+                    var rendered = this.component.render();
+                    if (rendered instanceof VirtualElement_2.VirtualElement) {
+                        return rendered;
+                    }
+                    else {
+                        return HtmlTypes_1.div({}, rendered);
+                    }
+                };
                 return TinyRoot;
             }());
             exports_4("TinyRoot", TinyRoot);
@@ -358,11 +380,11 @@ System.register("TinyTypeView/TinyComponent", ["TinyTypeView/ChangeWrapper"], fu
 System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], function (exports_5, context_5) {
     "use strict";
     var __moduleName = context_5 && context_5.id;
-    var VirtualElement_2, DiffRenderer;
+    var VirtualElement_3, DiffRenderer;
     return {
         setters: [
-            function (VirtualElement_2_1) {
-                VirtualElement_2 = VirtualElement_2_1;
+            function (VirtualElement_3_1) {
+                VirtualElement_3 = VirtualElement_3_1;
             }
         ],
         execute: function () {
@@ -371,9 +393,9 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
                     this.lastVirtualElement = null;
                     this.eventListener = eventListener;
                 }
-                DiffRenderer.prototype.Render = function (htmlElement, oldVe, ve, initial) {
-                    if (initial === void 0) { initial = true; }
-                    var oldVe = (initial && this.lastVirtualElement) ? this.lastVirtualElement : oldVe;
+                DiffRenderer.prototype.Render = function (htmlElement, oldVe, ve, root) {
+                    if (root === void 0) { root = true; }
+                    var oldVe = (root && this.lastVirtualElement) ? this.lastVirtualElement : oldVe;
                     if (ve.children) {
                         if (typeof (ve.children) == "string") {
                             if (htmlElement.childNodes.length == 0) {
@@ -389,7 +411,7 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
                             for (var i = 0; i < max; i++) {
                                 var element = ve.children.length > i ? ve.children[i] : null;
                                 var oldElement = oldVe != null && oldVe.children != null && oldVe.children.length > i ? oldVe.children[i] : null;
-                                if (element instanceof VirtualElement_2.VirtualElement) {
+                                if (element instanceof VirtualElement_3.VirtualElement) {
                                     if (oldElement === null && element) {
                                         var $elChild = document.createElement(element.elementTag);
                                         element.element = $elChild;
@@ -453,7 +475,7 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
                             }
                         }
                     }
-                    if (initial) {
+                    if (root) {
                         this.lastVirtualElement = ve;
                     }
                     return htmlElement;
@@ -464,74 +486,51 @@ System.register("TinyTypeView/DiffRenderer", ["TinyTypeView/VirtualElement"], fu
         }
     };
 });
-System.register("TinyTypeView/OneTimeRenderer", ["TinyTypeView/VirtualElement"], function (exports_6, context_6) {
+System.register("TinyTypeView/ComponentRenderer", ["TinyTypeView/VirtualElement"], function (exports_6, context_6) {
     "use strict";
     var __moduleName = context_6 && context_6.id;
-    var VirtualElement_3, OneTimeRenderer;
+    var VirtualElement_4, ComponentRenderer;
     return {
         setters: [
-            function (VirtualElement_3_1) {
-                VirtualElement_3 = VirtualElement_3_1;
+            function (VirtualElement_4_1) {
+                VirtualElement_4 = VirtualElement_4_1;
             }
         ],
         execute: function () {
-            OneTimeRenderer = (function () {
-                function OneTimeRenderer() {
+            ComponentRenderer = (function () {
+                function ComponentRenderer() {
                 }
-                OneTimeRenderer.Render = function (ve, eventListener) {
-                    var el = document.createElement(ve.elementTag);
-                    if (ve.children) {
-                        for (var i = 0; i < ve.children.length; i++) {
-                            var element = ve.children[i];
-                            if (element === null || element === undefined) {
-                                continue;
-                            }
-                            if (typeof (element) == "string") {
-                                el.appendChild(document.createTextNode(element));
-                            }
-                            else if (element instanceof VirtualElement_3.VirtualElement) {
-                                el.appendChild(OneTimeRenderer.Render(element, eventListener));
-                            }
-                        }
-                    }
-                    if (ve.attributes) {
-                        for (var key in ve.attributes) {
-                            if (ve.attributes.hasOwnProperty(key)) {
-                                var value = ve.attributes[key];
-                                if (key == "className") {
-                                    key = "class";
-                                }
-                                if (typeof (value) == "function") {
-                                    el.addEventListener(key.substr(2), value, true);
-                                    if (eventListener) {
-                                        el.addEventListener(key.substr(2), eventListener, true);
-                                    }
-                                }
-                                else {
-                                    el.setAttribute(key, value);
-                                }
-                            }
-                        }
-                    }
-                    return el;
+                ComponentRenderer.prototype.Render = function (component) {
+                    var elements = this.getElementsFromComponent(component);
                 };
-                return OneTimeRenderer;
+                ComponentRenderer.prototype.getElementsFromComponent = function (component) {
+                    var currentRender = component.virtualRender();
+                    var elements;
+                    if (currentRender instanceof VirtualElement_4.VirtualElement) {
+                        elements = [currentRender];
+                    }
+                    else {
+                        elements = currentRender;
+                    }
+                    return elements;
+                };
+                return ComponentRenderer;
             }());
-            exports_6("OneTimeRenderer", OneTimeRenderer);
+            exports_6("ComponentRenderer", ComponentRenderer);
         }
     };
 });
-System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyComponent", "TinyTypeView/DiffRenderer", "TinyTypeView/OneTimeRenderer"], function (exports_7, context_7) {
+System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyComponent", "TinyTypeView/DiffRenderer", "TinyTypeView/ComponentRenderer"], function (exports_7, context_7) {
     "use strict";
     var __moduleName = context_7 && context_7.id;
     function render() {
-        diffRenderer.Render(node, null, root.component.virtualRender(), true);
+        diffRenderer.Render(node, null, root.render(), true);
     }
-    var HtmlTypes_1, TinyComponent_1, DiffRenderer_1, OneTimeRenderer_1, SampleComponent, sampleModel, root, renderer, diffRenderer, node;
+    var HtmlTypes_2, TinyComponent_1, DiffRenderer_1, ComponentRenderer_1, SampleComponent, sampleModel, root, diffRenderer, componentRenderer, node;
     return {
         setters: [
-            function (HtmlTypes_1_1) {
-                HtmlTypes_1 = HtmlTypes_1_1;
+            function (HtmlTypes_2_1) {
+                HtmlTypes_2 = HtmlTypes_2_1;
             },
             function (TinyComponent_1_1) {
                 TinyComponent_1 = TinyComponent_1_1;
@@ -539,8 +538,8 @@ System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyCo
             function (DiffRenderer_1_1) {
                 DiffRenderer_1 = DiffRenderer_1_1;
             },
-            function (OneTimeRenderer_1_1) {
-                OneTimeRenderer_1 = OneTimeRenderer_1_1;
+            function (ComponentRenderer_1_1) {
+                ComponentRenderer_1 = ComponentRenderer_1_1;
             }
         ],
         execute: function () {
@@ -555,23 +554,18 @@ System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyCo
                     return _this;
                 }
                 SampleComponent.prototype.virtualRender = function () {
-                    if (this.virtualElement === null || this.childChanged || this.propertyChanged) {
-                        this.virtualElement = HtmlTypes_1.div({}, [
-                            HtmlTypes_1.div({}, this.incremental.toString()),
-                            HtmlTypes_1.button({ onclick: this.increase }, "Increase!")
-                        ]);
-                        this.propertyChanged = false;
-                    }
-                    return this.virtualElement;
+                    return HtmlTypes_2.div({}, [
+                        HtmlTypes_2.div({}, this.incremental.toString()),
+                        HtmlTypes_2.button({ onclick: this.increase }, "Increase!")
+                    ]);
                 };
                 return SampleComponent;
             }(TinyComponent_1.TinyComponent));
             exports_7("SampleComponent", SampleComponent);
             sampleModel = new SampleComponent();
             root = new TinyComponent_1.TinyRoot(sampleModel);
-            renderer = new OneTimeRenderer_1.OneTimeRenderer();
             diffRenderer = new DiffRenderer_1.DiffRenderer(render);
-            ;
+            componentRenderer = new ComponentRenderer_1.ComponentRenderer();
             node = document.createElement('div');
             document.body.appendChild(node);
             render();
