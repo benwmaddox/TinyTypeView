@@ -4,9 +4,12 @@ var DiffRenderer = (function () {
         this.lastVirtualElement = null;
         this.eventListener = eventListener;
     }
-    DiffRenderer.prototype.Render = function (htmlElement, oldVe, ve, initial) {
-        if (initial === void 0) { initial = true; }
-        var oldVe = (initial && this.lastVirtualElement) ? this.lastVirtualElement : oldVe;
+    DiffRenderer.prototype.Render = function (htmlElement, oldVe, ve, root) {
+        if (root === void 0) { root = true; }
+        var oldVe = (root && this.lastVirtualElement) ? this.lastVirtualElement : oldVe;
+        if (oldVe === ve) {
+            return htmlElement;
+        }
         if (ve.children) {
             if (typeof (ve.children) == "string") {
                 if (htmlElement.childNodes.length == 0) {
@@ -86,7 +89,7 @@ var DiffRenderer = (function () {
                 }
             }
         }
-        if (initial) {
+        if (root) {
             this.lastVirtualElement = ve;
         }
         return htmlElement;

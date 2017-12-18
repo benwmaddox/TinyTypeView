@@ -1,4 +1,4 @@
-(function () {
+var component = (function (exports) {
 'use strict';
 
 var VirtualElement = (function () {
@@ -10,15 +10,6 @@ var VirtualElement = (function () {
     }
     return VirtualElement;
 }());
-
-function a(attributes, children) { return new VirtualElement("a", attributes, children); }
-
-
-
-
-
-
-
 
 function button(attributes, children) { return new VirtualElement("button", attributes, children); }
 
@@ -37,18 +28,6 @@ function div(attributes, children) { return new VirtualElement("div", attributes
 
 
 
-function h1(attributes, children) { return new VirtualElement("h1", attributes, children); }
-
-
-
-
-
-
-
-
-
-
-function input(attributes, children) { return new VirtualElement("input", attributes, children); }
 
 
 
@@ -65,7 +44,7 @@ function input(attributes, children) { return new VirtualElement("input", attrib
 
 
 
-function option(attributes, children) { return new VirtualElement("option", attributes, children); }
+function li(attributes, children) { return new VirtualElement("li", attributes, children); }
 
 
 
@@ -74,20 +53,206 @@ function option(attributes, children) { return new VirtualElement("option", attr
 
 
 
-function select(attributes, children) { return new VirtualElement("select", attributes, children); }
 
-function boundSelect(SelectedIndexField, attributes, childRenderFunction, children) {
-    return select(attributes, children.map(function (m, i) { return childRenderFunction(m, false); }));
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+function span(attributes, children) { return new VirtualElement("span", attributes, children); }
+
+
+
+
+
+
+
+
+
+
+
+
+
+function ul(attributes, children) { return new VirtualElement("ul", attributes, children); }
+
+var ChangeWrapper = (function () {
+    function ChangeWrapper(wrappedItem, callback, skippedElements) {
+        var _this = this;
+        this.wrapProperty = function (instance, propName, callback) {
+            if (_this.skipped.indexOf(propName) !== -1) {
+                return;
+            }
+            if (Array.isArray(instance[propName])) {
+                for (var key in instance[propName]) {
+                    if (typeof instance[propName][key] === "object" && instance[propName][key] !== null) {
+                        var wrapper = new ChangeWrapper(instance[propName][key], callback, _this.skipped);
+                    }
+                }
+                var arrayProperty = instance[propName];
+                var originalPush = arrayProperty.push;
+                var originalSkipped = _this.skipped;
+                arrayProperty.push = function () {
+                    callback(instance, propName, arguments[0]);
+                    var result = originalPush.apply(this, arguments);
+                    var wrapper = new ChangeWrapper(arguments[0], callback, originalSkipped);
+                    return result;
+                };
+                var originalPop = arrayProperty.pop;
+                arrayProperty.pop = function () {
+                    callback(instance, propName, arrayProperty);
+                    var result = originalPop.apply(this, arguments);
+                    return result;
+                };
+                var originalSplice = arrayProperty.splice;
+                arrayProperty.splice = function () {
+                    callback(instance, propName, arrayProperty);
+                    var result = originalSplice.apply(this, arguments);
+                    return result;
+                };
+                var originalSlice = arrayProperty.slice;
+                arrayProperty.slice = function () {
+                    callback(instance, propName, arrayProperty);
+                    var result = originalSlice.apply(this, arguments);
+                    return result;
+                };
+                var originalShift = arrayProperty.shift;
+                arrayProperty.shift = function () {
+                    callback(instance, propName, arrayProperty);
+                    var result = originalShift.apply(this, arguments);
+                    return result;
+                };
+                var originalUnshift = arrayProperty.unshift;
+                arrayProperty.unshift = function () {
+                    callback(instance, propName, arrayProperty);
+                    var result = originalUnshift.apply(this, arguments);
+                    return result;
+                };
+            }
+            instance["___" + propName] = instance[propName];
+            delete instance[propName];
+            Object.defineProperty(instance, propName, {
+                get: function () {
+                    return instance["___" + propName];
+                },
+                set: function (value) {
+                    callback(instance, propName, value);
+                    instance["___" + propName] = value;
+                },
+                enumerable: true,
+                configurable: true
+            });
+        };
+        this.wrapped = wrappedItem;
+        this.skipped = skippedElements;
+        for (var prop in this.wrapped) {
+            if (skippedElements.indexOf(prop) !== -1) {
+                continue;
+            }
+            if (typeof (this.wrapped[prop]) != "function" && (prop.length < 2 || prop.substr(0, 2) != "__")) {
+                this.wrapProperty(this.wrapped, prop, callback);
+            }
+        }
+    }
+    return ChangeWrapper;
+}());
+
+var TinyComponent = (function () {
+    function TinyComponent() {
+        this.propertyChanged = false;
+        this.childChanged = false;
+        this.virtualElement = null;
+    }
+    TinyComponent.prototype.markPropertyChanged = function () {
+        this.propertyChanged = true;
+        var parent = this.parent;
+        while (parent != null && parent.childChanged == false) {
+            parent.childChanged = true;
+            parent = parent.parent;
+        }
+    };
+    TinyComponent.prototype.renderComponents = function (components) {
+        var results = [];
+        for (var i = 0; i < components.length; i++) {
+            var render = components[i].render();
+            if (render instanceof VirtualElement) {
+                results.push(render);
+            }
+            else {
+                for (var j = 0; j < render.length; j++) {
+                    results.push(render[j]);
+                }
+            }
+        }
+        return results;
+    };
+    TinyComponent.prototype.render = function () {
+        if (this.virtualElement === null || this.childChanged || this.propertyChanged) {
+            this.virtualElement = this.template();
+            this.propertyChanged = false;
+            this.childChanged = false;
+        }
+        return this.virtualElement;
+    };
+    TinyComponent.prototype.applyReactiveProperties = function () {
+        var a$$1 = new ChangeWrapper(this, function (item, propName, value) {
+            if (item[propName] !== value) {
+                item.markPropertyChanged();
+                if (value instanceof TinyComponent) {
+                    value.applyReactiveProperties();
+                    value.parent = item;
+                }
+                if (Array.isArray(value)) {
+                    for (var i = 0; i < value.length; i++) {
+                        if (value[i] instanceof TinyComponent) {
+                            value[i].applyReactiveProperties();
+                            value[i].parent = item;
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                }
+            }
+        }, ["propertyChanged", "childChanged", "virtualElement", "parent", "beforePropertyChange", "afterPropertyChange"]);
+    };
+    return TinyComponent;
+}());
+var TinyRoot = (function () {
+    function TinyRoot(component) {
+        this.component = component;
+        this.component.applyReactiveProperties();
+    }
+    TinyRoot.prototype.render = function () {
+        var rendered = this.component.render();
+        if (rendered instanceof VirtualElement) {
+            return rendered;
+        }
+        else {
+            return div({}, rendered);
+        }
+    };
+    return TinyRoot;
+}());
 
 var DiffRenderer = (function () {
     function DiffRenderer(eventListener) {
         this.lastVirtualElement = null;
         this.eventListener = eventListener;
     }
-    DiffRenderer.prototype.Render = function (htmlElement, oldVe, ve, initial) {
-        if (initial === void 0) { initial = true; }
-        var oldVe = (initial && this.lastVirtualElement) ? this.lastVirtualElement : oldVe;
+    DiffRenderer.prototype.Render = function (htmlElement, oldVe, ve, root) {
+        if (root === void 0) { root = true; }
+        var oldVe = (root && this.lastVirtualElement) ? this.lastVirtualElement : oldVe;
+        if (oldVe === ve) {
+            return htmlElement;
+        }
         if (ve.children) {
             if (typeof (ve.children) == "string") {
                 if (htmlElement.childNodes.length == 0) {
@@ -167,7 +332,7 @@ var DiffRenderer = (function () {
                 }
             }
         }
-        if (initial) {
+        if (root) {
             this.lastVirtualElement = ve;
         }
         return htmlElement;
@@ -175,168 +340,72 @@ var DiffRenderer = (function () {
     return DiffRenderer;
 }());
 
-var ChangeWrapper = (function () {
-    function ChangeWrapper(wrappedItem, callback) {
-        this.wrapProperty = function (instance, propName, callback) {
-            if (Array.isArray(instance[propName])) {
-                for (var key in instance[propName]) {
-                    if (typeof instance[propName][key] === "object" && instance[propName][key] !== null) {
-                        var wrapper = new ChangeWrapper(instance[propName][key], callback);
-                    }
-                }
-                var arrayProperty = instance[propName];
-                var originalPush = arrayProperty.push;
-                arrayProperty.push = function () {
-                    var result = originalPush.apply(this, arguments);
-                    callback(instance, propName, arrayProperty);
-                    return result;
-                };
-                var originalPop = arrayProperty.pop;
-                arrayProperty.pop = function () {
-                    var result = originalPop.apply(this, arguments);
-                    callback(instance, propName, arrayProperty);
-                    return result;
-                };
-                var originalSplice = arrayProperty.splice;
-                arrayProperty.splice = function () {
-                    var result = originalSplice.apply(this, arguments);
-                    callback(instance, propName, arrayProperty);
-                    return result;
-                };
-                var originalSlice = arrayProperty.slice;
-                arrayProperty.slice = function () {
-                    var result = originalSlice.apply(this, arguments);
-                    callback(instance, propName, arrayProperty);
-                    return result;
-                };
-                var originalShift = arrayProperty.shift;
-                arrayProperty.shift = function () {
-                    var result = originalShift.apply(this, arguments);
-                    callback(instance, propName, arrayProperty);
-                    return result;
-                };
-                var originalUnshift = arrayProperty.unshift;
-                arrayProperty.unshift = function () {
-                    var result = originalUnshift.apply(this, arguments);
-                    callback(instance, propName, arrayProperty);
-                    return result;
-                };
-            }
-            instance["___" + propName] = instance[propName];
-            delete instance[propName];
-            Object.defineProperty(instance, propName, {
-                get: function () {
-                    return instance["___" + propName];
-                },
-                set: function (value) {
-                    callback(instance, propName, value);
-                    instance["___" + propName] = value;
-                },
-                enumerable: true,
-                configurable: true
-            });
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p$$1 in b) if (b.hasOwnProperty(p$$1)) d[p$$1] = b[p$$1]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var NameItemComponent = (function (_super) {
+    __extends(NameItemComponent, _super);
+    function NameItemComponent(name) {
+        var _this = _super.call(this) || this;
+        _this.name = "";
+        _this.appendToName = function () {
+            _this.name += " :) ";
         };
-        this.wrapped = wrappedItem;
-        for (var prop in this.wrapped) {
-            if (typeof (this.wrapped[prop]) != "function") {
-                this.wrapProperty(this.wrapped, prop, callback);
-            }
-        }
+        _this.name = name;
+        return _this;
     }
-    return ChangeWrapper;
-}());
-
-var TestModel = (function () {
-    function TestModel() {
-        this.actions = new TestActions(this);
+    NameItemComponent.prototype.template = function () {
+        return li({}, [
+            span(null, this.name + " "),
+            button({ onclick: this.appendToName }, "More smiles")
+        ]);
+    };
+    return NameItemComponent;
+}(TinyComponent));
+var SampleComponent = (function (_super) {
+    __extends(SampleComponent, _super);
+    function SampleComponent() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.incremental = 0;
+        _this.nameItems = [];
+        _this.increase = function () {
+            _this.incremental++;
+        };
+        _this.addNumberedChild = function () {
+            _this.nameItems.push(new NameItemComponent("Child # " + _this.incremental));
+        };
+        return _this;
     }
-    return TestModel;
-}());
-var TestActions = (function () {
-    function TestActions(model) {
-        var _this = this;
-        this.increment = function () {
-            _this.Model.incremental++;
-        };
-        this.decrement = function () {
-            _this.Model.incremental--;
-        };
-        this.moreStrings = function () {
-            _this.Model.strings.push("Another " + _this.Model.incremental);
-        };
-        this.fewerStrings = function () {
-            _this.Model.strings.splice(-1, 1);
-        };
-        this.indexChange = function (ev) {
-            _this.Model.selectionIndex = ev.currentTarget.selectedIndex;
-        };
-        this.Model = model;
-    }
-    return TestActions;
-}());
-var stringList = function (model) {
-    return div(null, model.strings.map(function (m, i) { return div(null, i + ": " + m); }));
-};
-var interactiveButtons = function (model) {
-    return div(null, [
-        button({ onclick: model.actions.decrement }, "-1"),
-        div(null, model.incremental.toString()),
-        button({ onclick: model.actions.increment }, "+1")
-    ]);
-};
-var inputMisc = function (model) {
-    return input({ autofocus: true, placeholder: "TODO" });
-};
-var selector = function (model) {
-    return select({ onchange: model.actions.indexChange, className: "sampleClass" }, [
-        option({ value: "a" }, "aa"),
-        option({ value: "b" }, "bb")
-    ]);
-};
-var sampleOption = function (model) {
-    return option({ value: model.value }, model.name);
-};
-var sampleBoundSelect = function (model) {
-    return boundSelect("value", {}, sampleOption, model.options);
-};
-var selectorResults = function (model) {
-    return div({}, "Selected Index: " + model.selectionIndex);
-};
-var moreStringsView = function (model) {
-    return button({ onclick: model.actions.moreStrings }, "More text!");
-};
-var fewerStringsView = function (model) {
-    return button({ onclick: model.actions.fewerStrings }, "Fewer text items");
-};
-var root = function (model) {
-    return div(null, [
-        h1({}, "Giant H1!!"),
-        a({ href: "#here" }, "Link Here"),
-        div({ className: "sample", onclick: function (f) { alert("hah"); } }, "Text here"),
-        a({ href: "#there" }, "There"),
-        stringList(model),
-        interactiveButtons(model),
-        inputMisc(model),
-        selector(model),
-        selectorResults(model),
-        moreStringsView(model),
-        fewerStringsView(model),
-        sampleBoundSelect(model)
-    ]);
-};
-var mainModel = new TestModel();
-mainModel.incremental = 0;
-mainModel.strings = ["a", "b", "c", "asdfasdf"];
-mainModel.options = [{ name: "b", value: "2" }, { name: "c", value: "3" }];
-mainModel.selectionIndex = -1;
-var diffRender = new DiffRenderer(render);
+    SampleComponent.prototype.template = function () {
+        return div({}, [
+            div({}, this.incremental.toString()),
+            button({ onclick: this.increase }, "Increase!"),
+            ul({}, this.renderComponents(this.nameItems)),
+            button({ onclick: this.addNumberedChild }, "Add Child")
+        ]);
+    };
+    return SampleComponent;
+}(TinyComponent));
+var sampleModel = new SampleComponent();
+var root = new TinyRoot(sampleModel);
+var diffRenderer = new DiffRenderer(render);
 var node = document.createElement('div');
 document.body.appendChild(node);
 function render() {
-    var newVM = root(mainModel);
-    diffRender.Render(node, null, newVM, true);
+    diffRenderer.Render(node, null, root.render(), true);
 }
 render();
-var wrapper = new ChangeWrapper(mainModel, function (item, prop, value) { console.log(prop + ": " + value); });
 
-}());
+exports.NameItemComponent = NameItemComponent;
+exports.SampleComponent = SampleComponent;
+
+return exports;
+
+}({}));

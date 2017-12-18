@@ -17,4 +17,6 @@ npm install rollup --global
 
 # Compact compilation:
 tsc
-rollup main.js --o bundle.js --f iife
+rollup tsCompiled/main.js --o bundle.js --f iife
+
+rollup tsCompiled/componentMain.js --o bundle.js --f iife -n component -w

@@ -356,7 +356,7 @@ System.register("TinyTypeView/TinyComponent", ["TinyTypeView/VirtualElement", "T
                 };
                 TinyComponent.prototype.render = function () {
                     if (this.virtualElement === null || this.childChanged || this.propertyChanged) {
-                        this.virtualElement = this.virtualRender();
+                        this.virtualElement = this.template();
                         this.propertyChanged = false;
                         this.childChanged = false;
                     }
@@ -532,12 +532,15 @@ System.register("TinyTypeView/ComponentRenderer", ["TinyTypeView/VirtualElement"
         execute: function () {
             ComponentRenderer = (function () {
                 function ComponentRenderer() {
+                    this.changeOnNextTick = false;
+                    this.nextTick = function () {
+                    };
                 }
                 ComponentRenderer.prototype.Render = function (component) {
                     var elements = this.getElementsFromComponent(component);
                 };
                 ComponentRenderer.prototype.getElementsFromComponent = function (component) {
-                    var currentRender = component.virtualRender();
+                    var currentRender = component.template();
                     var elements;
                     if (currentRender instanceof VirtualElement_4.VirtualElement) {
                         elements = [currentRender];
@@ -582,12 +585,12 @@ System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyCo
                     var _this = _super.call(this) || this;
                     _this.name = "";
                     _this.appendToName = function () {
-                        _this.name += " : ) ";
+                        _this.name += " :) ";
                     };
                     _this.name = name;
                     return _this;
                 }
-                NameItemComponent.prototype.virtualRender = function () {
+                NameItemComponent.prototype.template = function () {
                     return HtmlTypes_2.li({}, [
                         HtmlTypes_2.span(null, this.name + " "),
                         HtmlTypes_2.button({ onclick: this.appendToName }, "More smiles")
@@ -610,12 +613,13 @@ System.register("componentMain", ["TinyTypeView/HtmlTypes", "TinyTypeView/TinyCo
                     };
                     return _this;
                 }
-                SampleComponent.prototype.virtualRender = function () {
+                SampleComponent.prototype.template = function () {
                     return HtmlTypes_2.div({}, [
                         HtmlTypes_2.div({}, this.incremental.toString()),
                         HtmlTypes_2.button({ onclick: this.increase }, "Increase!"),
-                        HtmlTypes_2.button({ onclick: this.addNumberedChild }, "Add Child"),
-                    ].concat(this.renderComponents(this.nameItems)));
+                        HtmlTypes_2.ul({}, this.renderComponents(this.nameItems)),
+                        HtmlTypes_2.button({ onclick: this.addNumberedChild }, "Add Child")
+                    ]);
                 };
                 return SampleComponent;
             }(TinyComponent_1.TinyComponent));

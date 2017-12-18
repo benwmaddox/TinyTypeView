@@ -1,4 +1,4 @@
-import {a, div, button, input, select, option, h1, li, span} from "./TinyTypeView/HtmlTypes"
+import {a, div, button, input, select, option, h1, li, span, ul} from "./TinyTypeView/HtmlTypes"
 import {VirtualElement} from "./TinyTypeView/VirtualElement"
 import {TinyComponent, TinyRoot} from "./TinyTypeView/TinyComponent"
  import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
@@ -14,10 +14,10 @@ export class NameItemComponent extends TinyComponent{
     }
 
     appendToName = () => {
-        this.name += " : ) ";
+        this.name += " :) ";
     }
 
-    public virtualRender(): VirtualElement | VirtualElement[] {
+    public template(): VirtualElement | VirtualElement[] {
         return li({}, [
             span(null,this.name + " "), 
             button({onclick: this.appendToName}, "More smiles")
@@ -36,15 +36,16 @@ export class SampleComponent extends TinyComponent{
         this.nameItems.push(new NameItemComponent("Child # " + this.incremental))
     }
 
-    public virtualRender() : VirtualElement {
+    public template() : VirtualElement {
         // var childRenders = this.nameItems.map(x => x.render());
         // var elements = [];
 
         return div({}, [
-                div({}, this.incremental.toString()), 
-                button({onclick: this.increase}, "Increase!"),
-                button({onclick: this.addNumberedChild}, "Add Child"),                
-            ].concat(this.renderComponents(this.nameItems)));
+                    div({}, this.incremental.toString()), 
+                    button({onclick: this.increase}, "Increase!"),
+                    ul({}, this.renderComponents(this.nameItems)),
+                    button({onclick: this.addNumberedChild}, "Add Child")
+                ]);
     }
     
     // public beforePropertyChange(propName: string, value: any): void {

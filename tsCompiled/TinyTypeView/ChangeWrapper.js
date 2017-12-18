@@ -5,7 +5,6 @@ var ChangeWrapper = (function () {
             if (_this.skipped.indexOf(propName) !== -1) {
                 return;
             }
-            var arrayChangeFunctions = ['push', 'pop', 'splice'];
             if (Array.isArray(instance[propName])) {
                 for (var key in instance[propName]) {
                     if (typeof instance[propName][key] === "object" && instance[propName][key] !== null) {
@@ -14,39 +13,41 @@ var ChangeWrapper = (function () {
                 }
                 var arrayProperty = instance[propName];
                 var originalPush = arrayProperty.push;
+                var originalSkipped = _this.skipped;
                 arrayProperty.push = function () {
+                    callback(instance, propName, arguments[0]);
                     var result = originalPush.apply(this, arguments);
-                    callback(instance, propName, arrayProperty);
+                    var wrapper = new ChangeWrapper(arguments[0], callback, originalSkipped);
                     return result;
                 };
                 var originalPop = arrayProperty.pop;
                 arrayProperty.pop = function () {
-                    var result = originalPop.apply(this, arguments);
                     callback(instance, propName, arrayProperty);
+                    var result = originalPop.apply(this, arguments);
                     return result;
                 };
                 var originalSplice = arrayProperty.splice;
                 arrayProperty.splice = function () {
-                    var result = originalSplice.apply(this, arguments);
                     callback(instance, propName, arrayProperty);
+                    var result = originalSplice.apply(this, arguments);
                     return result;
                 };
                 var originalSlice = arrayProperty.slice;
                 arrayProperty.slice = function () {
-                    var result = originalSlice.apply(this, arguments);
                     callback(instance, propName, arrayProperty);
+                    var result = originalSlice.apply(this, arguments);
                     return result;
                 };
                 var originalShift = arrayProperty.shift;
                 arrayProperty.shift = function () {
-                    var result = originalShift.apply(this, arguments);
                     callback(instance, propName, arrayProperty);
+                    var result = originalShift.apply(this, arguments);
                     return result;
                 };
                 var originalUnshift = arrayProperty.unshift;
                 arrayProperty.unshift = function () {
-                    var result = originalUnshift.apply(this, arguments);
                     callback(instance, propName, arrayProperty);
+                    var result = originalUnshift.apply(this, arguments);
                     return result;
                 };
             }
@@ -70,7 +71,7 @@ var ChangeWrapper = (function () {
             if (skippedElements.indexOf(prop) !== -1) {
                 continue;
             }
-            if (typeof (this.wrapped[prop]) != "function") {
+            if (typeof (this.wrapped[prop]) != "function" && (prop.length < 2 || prop.substr(0, 2) != "__")) {
                 this.wrapProperty(this.wrapped, prop, callback);
             }
         }

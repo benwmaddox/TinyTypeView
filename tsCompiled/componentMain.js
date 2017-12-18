@@ -8,46 +8,62 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { div, button } from "./TinyTypeView/HtmlTypes";
-import { TinyComponent } from "./TinyTypeView/TinyComponent";
-import { OneTimeRenderer } from "./TinyTypeView/OneTimeRenderer";
+import { div, button, li, span, ul } from "./TinyTypeView/HtmlTypes";
+import { TinyComponent, TinyRoot } from "./TinyTypeView/TinyComponent";
+import { DiffRenderer } from "./TinyTypeView/DiffRenderer";
+import { ComponentRenderer } from "./TinyTypeView/ComponentRenderer";
+var NameItemComponent = (function (_super) {
+    __extends(NameItemComponent, _super);
+    function NameItemComponent(name) {
+        var _this = _super.call(this) || this;
+        _this.name = "";
+        _this.appendToName = function () {
+            _this.name += " :) ";
+        };
+        _this.name = name;
+        return _this;
+    }
+    NameItemComponent.prototype.template = function () {
+        return li({}, [
+            span(null, this.name + " "),
+            button({ onclick: this.appendToName }, "More smiles")
+        ]);
+    };
+    return NameItemComponent;
+}(TinyComponent));
+export { NameItemComponent };
 var SampleComponent = (function (_super) {
     __extends(SampleComponent, _super);
     function SampleComponent() {
-        var _this = _super.call(this) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.incremental = 0;
-        _this.applyReactiveProperties();
+        _this.nameItems = [];
+        _this.increase = function () {
+            _this.incremental++;
+        };
+        _this.addNumberedChild = function () {
+            _this.nameItems.push(new NameItemComponent("Child # " + _this.incremental));
+        };
         return _this;
     }
-    SampleComponent.prototype.increase = function () {
-        this.incremental++;
-    };
-    SampleComponent.prototype.virtualRender = function () {
-        if (this.virtualElement === null || this.childChanged || this.propertyChanged) {
-            this.virtualElement = div({}, [
-                div({}, this.incremental.toString()),
-                button({ onclick: this.increase }, "Increase!")
-            ]);
-            this.propertyChanged = false;
-        }
-        return this.virtualElement;
-    };
-    SampleComponent.prototype.beforePropertyChange = function (propName, value) {
-    };
-    SampleComponent.prototype.afterPropertyChange = function (propName, value) {
+    SampleComponent.prototype.template = function () {
+        return div({}, [
+            div({}, this.incremental.toString()),
+            button({ onclick: this.increase }, "Increase!"),
+            ul({}, this.renderComponents(this.nameItems)),
+            button({ onclick: this.addNumberedChild }, "Add Child")
+        ]);
     };
     return SampleComponent;
 }(TinyComponent));
 export { SampleComponent };
-var mainModel = new SampleComponent();
-var renderer = new OneTimeRenderer();
+var sampleModel = new SampleComponent();
+var root = new TinyRoot(sampleModel);
+var diffRenderer = new DiffRenderer(render);
+var componentRenderer = new ComponentRenderer();
 var node = document.createElement('div');
 document.body.appendChild(node);
 function render() {
-    var result = OneTimeRenderer.Render(mainModel.virtualRender(), function (a) { render(); });
-    if (node.childNodes.length > 0) {
-        node.removeChild(node.children[0]);
-    }
-    node.appendChild(result);
+    diffRenderer.Render(node, null, root.render(), true);
 }
 render();

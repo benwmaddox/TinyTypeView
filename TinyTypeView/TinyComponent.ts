@@ -40,13 +40,13 @@ export abstract class TinyComponent{
     }
     public render() : VirtualElement | VirtualElement[]{        
         if (this.virtualElement === null || this.childChanged || this.propertyChanged){
-            this.virtualElement = this.virtualRender();
+            this.virtualElement = this.template();
             this.propertyChanged = false;
             this.childChanged = false;
         }
         return this.virtualElement;
     }
-    public abstract virtualRender() : VirtualElement | VirtualElement[];    
+    public abstract template() : VirtualElement | VirtualElement[];    
    
     public applyReactiveProperties() : void{
         var a = new ChangeWrapper(this, 

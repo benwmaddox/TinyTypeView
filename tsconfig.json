@@ -52,6 +52,7 @@
     
   },
   "files": [
-    "main.ts"
+    "main.ts",
+    "componentMain.ts"
   ]
 }
