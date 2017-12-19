@@ -38,9 +38,6 @@ export class SampleComponent extends TinyComponent{
     }
 
     public template() : VirtualElement {
-        // var childRenders = this.nameItems.map(x => x.render());
-        // var elements = [];
-
         return div({}, [
                     div({}, this.incremental.toString()), 
                     button({onclick: this.increase}, "Increase!"),
@@ -52,26 +49,7 @@ export class SampleComponent extends TinyComponent{
 
 }
 
-
 var node = document.createElement('div');
 document.body.appendChild(node);
 var sampleModel = new SampleComponent();
 var root = new TinyRoot(sampleModel, node);
-// var renderer = new OneTimeRenderer();
-// var diffRenderer = new DiffRenderer(render);
-// var componentRenderer = new ComponentRenderer();
-// function render(){    
-//     // var result = OneTimeRenderer.Render(root.component.virtualRender(), (a) => {render()})
-//     // if (node.childNodes.length > 0){
-//     //     node.removeChild(node.children[0])
-//     // }
-//     // node.appendChild(result);
-    
-//      diffRenderer.Render(node, null, root.render(), true)    
-//     //  componentRenderer.Render(root.component);
-// }
-
-// render();
-
-// var wrapper = new ChangeWrapper(mainModel, (item, prop, value) => { console.log(prop + ": " + value )});
-
