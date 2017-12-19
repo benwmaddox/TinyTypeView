@@ -6,10 +6,21 @@ export abstract class TinyComponent{
     constructor(){    
         this.propertyChanged = false;
         this.virtualElement = null;
+        // this.applyReactiveProperties();
+    }
+    public markPropertyChanged(){
+        this.propertyChanged = true;        
+        var parent = this.parent;
+        while (parent != null && parent.propertyChanged == false){
+            parent.propertyChanged = true;
+            parent = parent.parent;
+        }
     }
     public propertyChanged : boolean;
+    // public childChanged : boolean;    
     public virtualElement : VirtualElement |VirtualElement[]| null;
     public parent : TinyComponent | null;
+    // [key: string]: any;
 
     public renderComponents(components : TinyComponent[]): VirtualElement[] {
         var results : VirtualElement[] = [];
@@ -27,7 +38,7 @@ export abstract class TinyComponent{
         return results;
     }
     public render() : VirtualElement | VirtualElement[]{        
-        if (this.virtualElement === null  || this.propertyChanged){
+        if (this.virtualElement === null || this.propertyChanged){
             this.virtualElement = this.template();
             this.propertyChanged = false;
         }
@@ -42,7 +53,7 @@ export abstract class TinyComponent{
                     // if (this.beforePropertyChange){
                     //     this.beforePropertyChange(propName, value);                   
                     // }
-                    item.propertyChanged = true;
+                    item.markPropertyChanged()
                     if (value instanceof TinyComponent) {
                         value.applyReactiveProperties();
                         value.parent = item;

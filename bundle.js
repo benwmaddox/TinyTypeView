@@ -169,6 +169,14 @@ var TinyComponent = (function () {
         this.propertyChanged = false;
         this.virtualElement = null;
     }
+    TinyComponent.prototype.markPropertyChanged = function () {
+        this.propertyChanged = true;
+        var parent = this.parent;
+        while (parent != null && parent.propertyChanged == false) {
+            parent.propertyChanged = true;
+            parent = parent.parent;
+        }
+    };
     TinyComponent.prototype.renderComponents = function (components) {
         var results = [];
         for (var i = 0; i < components.length; i++) {
@@ -194,7 +202,7 @@ var TinyComponent = (function () {
     TinyComponent.prototype.applyReactiveProperties = function () {
         var a$$1 = new ChangeWrapper(this, function (item, propName, value) {
             if (item[propName] !== value) {
-                item.propertyChanged = true;
+                item.markPropertyChanged();
                 if (value instanceof TinyComponent) {
                     value.applyReactiveProperties();
                     value.parent = item;
@@ -214,22 +222,6 @@ var TinyComponent = (function () {
         }, ["propertyChanged", "childChanged", "virtualElement", "parent", "beforePropertyChange", "afterPropertyChange"]);
     };
     return TinyComponent;
-}());
-var TinyRoot = (function () {
-    function TinyRoot(component) {
-        this.component = component;
-        this.component.applyReactiveProperties();
-    }
-    TinyRoot.prototype.render = function () {
-        var rendered = this.component.render();
-        if (rendered instanceof VirtualElement) {
-            return rendered;
-        }
-        else {
-            return div({}, rendered);
-        }
-    };
-    return TinyRoot;
 }());
 
 var DiffRenderer = (function () {
@@ -330,6 +322,38 @@ var DiffRenderer = (function () {
     return DiffRenderer;
 }());
 
+var TinyRoot$1 = (function () {
+    function TinyRoot(component, boundElement) {
+        var _this = this;
+        this.renderPending = false;
+        this.prepareRender = function () {
+            if (_this.renderPending === false) {
+                _this.renderPending = true;
+                setTimeout(_this.runRender, 0);
+            }
+        };
+        this.runRender = function () {
+            _this.renderPending = false;
+            _this.diffRenderer.Render(_this.boundElement, null, _this.render(), true);
+        };
+        this.render = function () {
+            var rendered = _this.component.render();
+            if (rendered instanceof VirtualElement) {
+                return rendered;
+            }
+            else {
+                return div({}, rendered);
+            }
+        };
+        this.component = component;
+        this.boundElement = boundElement;
+        this.diffRenderer = new DiffRenderer(this.prepareRender);
+        this.component.applyReactiveProperties();
+        this.prepareRender();
+    }
+    return TinyRoot;
+}());
+
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -383,15 +407,10 @@ var SampleComponent = (function (_super) {
     };
     return SampleComponent;
 }(TinyComponent));
-var sampleModel = new SampleComponent();
-var root = new TinyRoot(sampleModel);
-var diffRenderer = new DiffRenderer(render);
 var node = document.createElement('div');
 document.body.appendChild(node);
-function render() {
-    diffRenderer.Render(node, null, root.render(), true);
-}
-render();
+var sampleModel = new SampleComponent();
+var root = new TinyRoot$1(sampleModel, node);
 
 exports.NameItemComponent = NameItemComponent;
 exports.SampleComponent = SampleComponent;

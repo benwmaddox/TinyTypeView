@@ -1,6 +1,7 @@
 import {a, div, button, input, select, option, h1, li, span, ul} from "./TinyTypeView/HtmlTypes"
 import {VirtualElement} from "./TinyTypeView/VirtualElement"
-import {TinyComponent, TinyRoot} from "./TinyTypeView/TinyComponent"
+import {TinyComponent} from "./TinyTypeView/TinyComponent"
+import { TinyRoot} from "./TinyTypeView/TinyRoot"
  import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
 // import {OneTimeRenderer} from "./TinyTypeView/OneTimeRenderer"
 import { ComponentRenderer } from "./TinyTypeView/ComponentRenderer";
@@ -13,7 +14,7 @@ export class NameItemComponent extends TinyComponent{
         this.name = name;
     }
 
-    appendToName = () => {
+    public appendToName = () => {
         this.name += " :) ";
     }
 
@@ -48,60 +49,29 @@ export class SampleComponent extends TinyComponent{
                 ]);
     }
     
-    // public beforePropertyChange(propName: string, value: any): void {
-    //     // throw new Error("Method not implemented.");
-    // }
-    // public afterPropertyChange(propName: string, value: any): void {
-    //     // throw new Error("Method not implemented.");
-    // }
 
 }
 
 
-// var root = (model: TestModel) =>
-//     div(null, [
-//         h1({}, "Giant H1!!"),
-//         a({href: "#here"}, "Link Here"),
-//         div({className: "sample",onclick:(f)=>{alert("hah");}}, "Text here"),
-//         a({href: "#there"}, "There"),        
-//         //button({onclick: (ev)=>{  alert("yay ");}, className: "asdf"}, "Sample Button"),
-//         stringList(model),
-//         interactiveButtons(model),
-//         inputMisc(model),
-//         selector(model),
-//         selectorResults(model),
-//         moreStringsView(model),
-//         fewerStringsView(model),
-//         sampleBoundSelect(model)
-//     ]
-//     );
-
-// var mainModel : TestModel = new TestModel() ;
-// mainModel.incremental =0;
-// mainModel.strings= ["a", "b", "c", "asdfasdf"];
-// mainModel.options = [{name: "b", value: "2"}, {name: "c", value: "3"}];
-// mainModel.selectionIndex = -1;
-// var diffRender = new DiffRenderer(render);
-
-var sampleModel = new SampleComponent();
-var root = new TinyRoot(sampleModel);
-// var renderer = new OneTimeRenderer();
-var diffRenderer = new DiffRenderer(render);
-var componentRenderer = new ComponentRenderer();
 var node = document.createElement('div');
 document.body.appendChild(node);
-function render(){    
-    // var result = OneTimeRenderer.Render(root.component.virtualRender(), (a) => {render()})
-    // if (node.childNodes.length > 0){
-    //     node.removeChild(node.children[0])
-    // }
-    // node.appendChild(result);
+var sampleModel = new SampleComponent();
+var root = new TinyRoot(sampleModel, node);
+// var renderer = new OneTimeRenderer();
+// var diffRenderer = new DiffRenderer(render);
+// var componentRenderer = new ComponentRenderer();
+// function render(){    
+//     // var result = OneTimeRenderer.Render(root.component.virtualRender(), (a) => {render()})
+//     // if (node.childNodes.length > 0){
+//     //     node.removeChild(node.children[0])
+//     // }
+//     // node.appendChild(result);
     
-     diffRenderer.Render(node, null, root.render(), true)    
-    //  componentRenderer.Render(root.component);
-}
+//      diffRenderer.Render(node, null, root.render(), true)    
+//     //  componentRenderer.Render(root.component);
+// }
 
-render();
+// render();
 
 // var wrapper = new ChangeWrapper(mainModel, (item, prop, value) => { console.log(prop + ": " + value )});
 

@@ -6,6 +6,14 @@ var TinyComponent = (function () {
         this.propertyChanged = false;
         this.virtualElement = null;
     }
+    TinyComponent.prototype.markPropertyChanged = function () {
+        this.propertyChanged = true;
+        var parent = this.parent;
+        while (parent != null && parent.propertyChanged == false) {
+            parent.propertyChanged = true;
+            parent = parent.parent;
+        }
+    };
     TinyComponent.prototype.renderComponents = function (components) {
         var results = [];
         for (var i = 0; i < components.length; i++) {
@@ -31,7 +39,7 @@ var TinyComponent = (function () {
     TinyComponent.prototype.applyReactiveProperties = function () {
         var a = new ChangeWrapper(this, function (item, propName, value) {
             if (item[propName] !== value) {
-                item.propertyChanged = true;
+                item.markPropertyChanged();
                 if (value instanceof TinyComponent) {
                     value.applyReactiveProperties();
                     value.parent = item;

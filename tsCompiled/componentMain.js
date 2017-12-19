@@ -9,9 +9,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { div, button, li, span, ul } from "./TinyTypeView/HtmlTypes";
-import { TinyComponent, TinyRoot } from "./TinyTypeView/TinyComponent";
-import { DiffRenderer } from "./TinyTypeView/DiffRenderer";
-import { ComponentRenderer } from "./TinyTypeView/ComponentRenderer";
+import { TinyComponent } from "./TinyTypeView/TinyComponent";
+import { TinyRoot } from "./TinyTypeView/TinyRoot";
 var NameItemComponent = (function (_super) {
     __extends(NameItemComponent, _super);
     function NameItemComponent(name) {
@@ -57,13 +56,7 @@ var SampleComponent = (function (_super) {
     return SampleComponent;
 }(TinyComponent));
 export { SampleComponent };
-var sampleModel = new SampleComponent();
-var root = new TinyRoot(sampleModel);
-var diffRenderer = new DiffRenderer(render);
-var componentRenderer = new ComponentRenderer();
 var node = document.createElement('div');
 document.body.appendChild(node);
-function render() {
-    diffRenderer.Render(node, null, root.render(), true);
-}
-render();
+var sampleModel = new SampleComponent();
+var root = new TinyRoot(sampleModel, node);
