@@ -6,7 +6,6 @@ export abstract class TinyComponent{
     constructor(){    
         this.propertyChanged = false;
         this.virtualElement = null;
-        // this.applyReactiveProperties();
     }
     public markPropertyChanged(){
         this.propertyChanged = true;        
@@ -17,10 +16,8 @@ export abstract class TinyComponent{
         }
     }
     public propertyChanged : boolean;
-    // public childChanged : boolean;    
     public virtualElement : VirtualElement |VirtualElement[]| null;
     public parent : TinyComponent | null;
-    // [key: string]: any;
 
     public renderComponents(components : TinyComponent[]): VirtualElement[] {
         var results : VirtualElement[] = [];
@@ -78,43 +75,4 @@ export abstract class TinyComponent{
             ["propertyChanged", "childChanged", "virtualElement", "parent", "beforePropertyChange", "afterPropertyChange"]
         )
     }
-    // public abstract beforePropertyChange(propName:string, value: any) : void;
-    // public abstract afterPropertyChange(propName:string, value: any) : void;
 }
-
-export class TinyRoot {
-    public component : TinyComponent;
-    constructor(component : TinyComponent){
-        this.component = component;
-        this.component.applyReactiveProperties();
-    }
-    public render() : VirtualElement {
-        var rendered = this.component.render();
-        if (rendered instanceof VirtualElement){
-            return rendered;
-        }
-        else {
-            return div({},rendered);
-        }
-    }
-}
-// Will need to walk to children and back up for virtual updates & real dom updates
-
-
-    // render
-    // property get/set setup
-    // event handling
-    // caching of virtual element
-
-    // propertyChanged bool
-    // childChanged bool
-
-
-    // Array changes
-    // push()
-    // pop()
-    // shift()
-    // unshift()
-    // splice()
-    // sort()
-    // reverse()

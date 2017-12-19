@@ -1,6 +1,5 @@
 import { VirtualElement } from "./VirtualElement";
 import { ChangeWrapper } from "./ChangeWrapper";
-import { div } from "./HtmlTypes";
 var TinyComponent = (function () {
     function TinyComponent() {
         this.propertyChanged = false;
@@ -61,20 +60,3 @@ var TinyComponent = (function () {
     return TinyComponent;
 }());
 export { TinyComponent };
-var TinyRoot = (function () {
-    function TinyRoot(component) {
-        this.component = component;
-        this.component.applyReactiveProperties();
-    }
-    TinyRoot.prototype.render = function () {
-        var rendered = this.component.render();
-        if (rendered instanceof VirtualElement) {
-            return rendered;
-        }
-        else {
-            return div({}, rendered);
-        }
-    };
-    return TinyRoot;
-}());
-export { TinyRoot };

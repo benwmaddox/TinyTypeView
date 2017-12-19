@@ -200,7 +200,7 @@ var TinyComponent = (function () {
         return this.virtualElement;
     };
     TinyComponent.prototype.applyReactiveProperties = function () {
-        var a$$1 = new ChangeWrapper(this, function (item, propName, value) {
+        var a = new ChangeWrapper(this, function (item, propName, value) {
             if (item[propName] !== value) {
                 item.markPropertyChanged();
                 if (value instanceof TinyComponent) {
@@ -322,7 +322,7 @@ var DiffRenderer = (function () {
     return DiffRenderer;
 }());
 
-var TinyRoot$1 = (function () {
+var TinyRoot = (function () {
     function TinyRoot(component, boundElement) {
         var _this = this;
         this.renderPending = false;
@@ -410,7 +410,7 @@ var SampleComponent = (function (_super) {
 var node = document.createElement('div');
 document.body.appendChild(node);
 var sampleModel = new SampleComponent();
-var root = new TinyRoot$1(sampleModel, node);
+var root = new TinyRoot(sampleModel, node);
 
 exports.NameItemComponent = NameItemComponent;
 exports.SampleComponent = SampleComponent;
