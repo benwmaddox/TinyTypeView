@@ -4,17 +4,8 @@ import { div } from "./HtmlTypes";
 var TinyComponent = (function () {
     function TinyComponent() {
         this.propertyChanged = false;
-        this.childChanged = false;
         this.virtualElement = null;
     }
-    TinyComponent.prototype.markPropertyChanged = function () {
-        this.propertyChanged = true;
-        var parent = this.parent;
-        while (parent != null && parent.childChanged == false) {
-            parent.childChanged = true;
-            parent = parent.parent;
-        }
-    };
     TinyComponent.prototype.renderComponents = function (components) {
         var results = [];
         for (var i = 0; i < components.length; i++) {
@@ -31,17 +22,16 @@ var TinyComponent = (function () {
         return results;
     };
     TinyComponent.prototype.render = function () {
-        if (this.virtualElement === null || this.childChanged || this.propertyChanged) {
+        if (this.virtualElement === null || this.propertyChanged) {
             this.virtualElement = this.template();
             this.propertyChanged = false;
-            this.childChanged = false;
         }
         return this.virtualElement;
     };
     TinyComponent.prototype.applyReactiveProperties = function () {
         var a = new ChangeWrapper(this, function (item, propName, value) {
             if (item[propName] !== value) {
-                item.markPropertyChanged();
+                item.propertyChanged = true;
                 if (value instanceof TinyComponent) {
                     value.applyReactiveProperties();
                     value.parent = item;

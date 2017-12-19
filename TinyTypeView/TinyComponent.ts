@@ -5,23 +5,11 @@ import { div } from "./HtmlTypes";
 export abstract class TinyComponent{
     constructor(){    
         this.propertyChanged = false;
-        this.childChanged = false;
         this.virtualElement = null;
-        // this.applyReactiveProperties();
-    }
-    public markPropertyChanged(){
-        this.propertyChanged = true;        
-        var parent = this.parent;
-        while (parent != null && parent.childChanged == false){
-            parent.childChanged = true;
-            parent = parent.parent;
-        }
     }
     public propertyChanged : boolean;
-    public childChanged : boolean;    
     public virtualElement : VirtualElement |VirtualElement[]| null;
     public parent : TinyComponent | null;
-    // [key: string]: any;
 
     public renderComponents(components : TinyComponent[]): VirtualElement[] {
         var results : VirtualElement[] = [];
@@ -39,10 +27,9 @@ export abstract class TinyComponent{
         return results;
     }
     public render() : VirtualElement | VirtualElement[]{        
-        if (this.virtualElement === null || this.childChanged || this.propertyChanged){
+        if (this.virtualElement === null  || this.propertyChanged){
             this.virtualElement = this.template();
             this.propertyChanged = false;
-            this.childChanged = false;
         }
         return this.virtualElement;
     }
@@ -55,7 +42,7 @@ export abstract class TinyComponent{
                     // if (this.beforePropertyChange){
                     //     this.beforePropertyChange(propName, value);                   
                     // }
-                    item.markPropertyChanged()
+                    item.propertyChanged = true;
                     if (value instanceof TinyComponent) {
                         value.applyReactiveProperties();
                         value.parent = item;
