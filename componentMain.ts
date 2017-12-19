@@ -1,13 +1,13 @@
 import {a, div, button, input, select, option, h1, li, span, ul} from "./TinyTypeView/HtmlTypes"
 import {VirtualElement} from "./TinyTypeView/VirtualElement"
-import {TinyComponent, OneTimeComponent} from "./TinyTypeView/TinyComponent"
-import { TinyRoot} from "./TinyTypeView/TinyRoot"
+import {Component, OneTimeComponent} from "./TinyTypeView/Component"
+import { Root} from "./TinyTypeView/Root"
  import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
 // import {OneTimeRenderer} from "./TinyTypeView/OneTimeRenderer"
 // import { ComponentRenderer } from "./TinyTypeView/ComponentRenderer";
 
 
-export class NameItemComponent extends TinyComponent{
+export class NameItemComponent extends Component{
     public name : string = "";
     constructor(name : string) {
         super();
@@ -26,7 +26,7 @@ export class NameItemComponent extends TinyComponent{
     }
     
 }
-export class SampleComponent extends TinyComponent{
+export class SampleComponent extends Component{
     incremental : number = 0;
     nameItems : NameItemComponent[] = [];
     uneditableItems : Uneditable[] = [];
@@ -66,4 +66,4 @@ export class Uneditable extends OneTimeComponent{
 var node = document.createElement('div');
 document.body.appendChild(node);
 var sampleModel = new SampleComponent();
-var root = new TinyRoot(sampleModel, node);
+var root = new Root(sampleModel, node);

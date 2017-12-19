@@ -1,8 +1,8 @@
-import { TinyComponent } from "./TinyComponent";
+import { Component } from "./TinyComponent";
 import { VirtualElement } from "./VirtualElement";
 
 export class ComponentRenderer {
-    public Render(component : TinyComponent){
+    public Render(component : Component){
         var elements = this.getElementsFromComponent(component);
 
     }
@@ -15,7 +15,7 @@ export class ComponentRenderer {
 
 
     
-    private getElementsFromComponent(component : TinyComponent) : VirtualElement[]{
+    private getElementsFromComponent(component : Component) : VirtualElement[]{
         var currentRender = component.template();
         var elements : VirtualElement[];
         if (currentRender instanceof VirtualElement){

@@ -3,7 +3,7 @@ import {ChangeWrapper} from "./ChangeWrapper"
 import { div } from "./HtmlTypes";
 
 
-export abstract class TinyComponent{
+export abstract class Component{
     constructor(){    
         this.propertyChanged = false;
         this.virtualElement = null;
@@ -18,9 +18,9 @@ export abstract class TinyComponent{
     }
     public propertyChanged : boolean;
     public virtualElement : VirtualElement | VirtualElement[] | null;
-    public parent : TinyComponent | null;
+    public parent : Component | null;
 
-    public renderComponents(components : TinyComponent[]): VirtualElement[] {
+    public renderComponents(components : Component[]): VirtualElement[] {
         var results : VirtualElement[] = [];
         for (var i = 0; i < components.length; i++) {
             var render = components[i].render();
@@ -52,13 +52,13 @@ export abstract class TinyComponent{
                     //     this.beforePropertyChange(propName, value);                   
                     // }
                     item.markPropertyChanged()
-                    if (value instanceof TinyComponent) {
+                    if (value instanceof Component) {
                         value.applyReactiveProperties();
                         value.parent = item;
                     }
                     if (Array.isArray(value)){
                         for (var i = 0; i < value.length; i++){
-                            if (value[i] instanceof TinyComponent){
+                            if (value[i] instanceof Component){
                                 value[i].applyReactiveProperties();
                                 value[i].parent = item;
                             }
@@ -79,7 +79,7 @@ export abstract class TinyComponent{
 }
 
 
-export abstract class OneTimeComponent extends TinyComponent {
+export abstract class OneTimeComponent extends Component {
     public markPropertyChanged(){
         // Don't mark self as changed.          
         var parent = this.parent;

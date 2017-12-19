@@ -9,8 +9,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { div, button, li, span, ul } from "./TinyTypeView/HtmlTypes";
-import { TinyComponent, OneTimeComponent } from "./TinyTypeView/TinyComponent";
-import { TinyRoot } from "./TinyTypeView/TinyRoot";
+import { Component, OneTimeComponent } from "./TinyTypeView/Component";
+import { Root } from "./TinyTypeView/Root";
 var NameItemComponent = (function (_super) {
     __extends(NameItemComponent, _super);
     function NameItemComponent(name) {
@@ -29,7 +29,7 @@ var NameItemComponent = (function (_super) {
         ]);
     };
     return NameItemComponent;
-}(TinyComponent));
+}(Component));
 export { NameItemComponent };
 var SampleComponent = (function (_super) {
     __extends(SampleComponent, _super);
@@ -60,7 +60,7 @@ var SampleComponent = (function (_super) {
         ]);
     };
     return SampleComponent;
-}(TinyComponent));
+}(Component));
 export { SampleComponent };
 var Uneditable = (function (_super) {
     __extends(Uneditable, _super);
@@ -79,4 +79,4 @@ export { Uneditable };
 var node = document.createElement('div');
 document.body.appendChild(node);
 var sampleModel = new SampleComponent();
-var root = new TinyRoot(sampleModel, node);
+var root = new Root(sampleModel, node);

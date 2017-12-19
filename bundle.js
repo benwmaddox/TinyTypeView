@@ -174,12 +174,12 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var TinyComponent = (function () {
-    function TinyComponent() {
+var Component = (function () {
+    function Component() {
         this.propertyChanged = false;
         this.virtualElement = null;
     }
-    TinyComponent.prototype.markPropertyChanged = function () {
+    Component.prototype.markPropertyChanged = function () {
         this.propertyChanged = true;
         var parent = this.parent;
         while (parent != null && parent.propertyChanged == false) {
@@ -187,7 +187,7 @@ var TinyComponent = (function () {
             parent = parent.parent;
         }
     };
-    TinyComponent.prototype.renderComponents = function (components) {
+    Component.prototype.renderComponents = function (components) {
         var results = [];
         for (var i = 0; i < components.length; i++) {
             var render = components[i].render();
@@ -202,24 +202,24 @@ var TinyComponent = (function () {
         }
         return results;
     };
-    TinyComponent.prototype.render = function () {
+    Component.prototype.render = function () {
         if (this.virtualElement === null || this.propertyChanged) {
             this.virtualElement = this.template();
             this.propertyChanged = false;
         }
         return this.virtualElement;
     };
-    TinyComponent.prototype.applyReactiveProperties = function () {
+    Component.prototype.applyReactiveProperties = function () {
         var a = new ChangeWrapper(this, function (item, propName, value) {
             if (item[propName] !== value) {
                 item.markPropertyChanged();
-                if (value instanceof TinyComponent) {
+                if (value instanceof Component) {
                     value.applyReactiveProperties();
                     value.parent = item;
                 }
                 if (Array.isArray(value)) {
                     for (var i = 0; i < value.length; i++) {
-                        if (value[i] instanceof TinyComponent) {
+                        if (value[i] instanceof Component) {
                             value[i].applyReactiveProperties();
                             value[i].parent = item;
                         }
@@ -231,7 +231,7 @@ var TinyComponent = (function () {
             }
         }, ["propertyChanged", "childChanged", "virtualElement", "parent", "beforePropertyChange", "afterPropertyChange"]);
     };
-    return TinyComponent;
+    return Component;
 }());
 var OneTimeComponent = (function (_super) {
     __extends$1(OneTimeComponent, _super);
@@ -248,7 +248,7 @@ var OneTimeComponent = (function (_super) {
     OneTimeComponent.prototype.applyReactiveProperties = function () {
     };
     return OneTimeComponent;
-}(TinyComponent));
+}(Component));
 
 var DiffRenderer = (function () {
     function DiffRenderer(eventListener) {
@@ -348,8 +348,8 @@ var DiffRenderer = (function () {
     return DiffRenderer;
 }());
 
-var TinyRoot = (function () {
-    function TinyRoot(component, boundElement) {
+var Root = (function () {
+    function Root(component, boundElement) {
         var _this = this;
         this.renderPending = false;
         this.prepareRender = function () {
@@ -377,7 +377,7 @@ var TinyRoot = (function () {
         this.component.applyReactiveProperties();
         this.prepareRender();
     }
-    return TinyRoot;
+    return Root;
 }());
 
 var __extends = (undefined && undefined.__extends) || (function () {
@@ -408,7 +408,7 @@ var NameItemComponent = (function (_super) {
         ]);
     };
     return NameItemComponent;
-}(TinyComponent));
+}(Component));
 var SampleComponent = (function (_super) {
     __extends(SampleComponent, _super);
     function SampleComponent() {
@@ -438,7 +438,7 @@ var SampleComponent = (function (_super) {
         ]);
     };
     return SampleComponent;
-}(TinyComponent));
+}(Component));
 var Uneditable = (function (_super) {
     __extends(Uneditable, _super);
     function Uneditable(text) {
@@ -455,7 +455,7 @@ var Uneditable = (function (_super) {
 var node = document.createElement('div');
 document.body.appendChild(node);
 var sampleModel = new SampleComponent();
-var root = new TinyRoot(sampleModel, node);
+var root = new Root(sampleModel, node);
 
 exports.NameItemComponent = NameItemComponent;
 exports.SampleComponent = SampleComponent;

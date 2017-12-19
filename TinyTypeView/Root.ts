@@ -1,16 +1,16 @@
 
-import { TinyComponent } from "./TinyComponent";
+import { Component } from "./Component";
 import { VirtualElement } from "./VirtualElement";
 import { div } from "./HtmlTypes";
 import { DiffRenderer } from "./DiffRenderer";
 
-export class TinyRoot {
-    public component : TinyComponent;
+export class Root {
+    public component : Component;
     public diffRenderer : DiffRenderer;
     public boundElement : HTMLElement;
     private renderPending = false;
 
-    constructor(component : TinyComponent, boundElement : HTMLElement){
+    constructor(component : Component, boundElement : HTMLElement){
         this.component = component;       
         this.boundElement = boundElement;
         this.diffRenderer = new DiffRenderer(this.prepareRender);
