@@ -164,6 +164,16 @@ var ChangeWrapper = (function () {
     return ChangeWrapper;
 }());
 
+var __extends$1 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var TinyComponent = (function () {
     function TinyComponent() {
         this.propertyChanged = false;
@@ -223,6 +233,22 @@ var TinyComponent = (function () {
     };
     return TinyComponent;
 }());
+var OneTimeComponent = (function (_super) {
+    __extends$1(OneTimeComponent, _super);
+    function OneTimeComponent() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    OneTimeComponent.prototype.markPropertyChanged = function () {
+        var parent = this.parent;
+        while (parent != null && parent.propertyChanged == false) {
+            parent.propertyChanged = true;
+            parent = parent.parent;
+        }
+    };
+    OneTimeComponent.prototype.applyReactiveProperties = function () {
+    };
+    return OneTimeComponent;
+}(TinyComponent));
 
 var DiffRenderer = (function () {
     function DiffRenderer(eventListener) {
@@ -389,11 +415,15 @@ var SampleComponent = (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.incremental = 0;
         _this.nameItems = [];
+        _this.uneditableItems = [];
         _this.increase = function () {
             _this.incremental++;
         };
         _this.addNumberedChild = function () {
             _this.nameItems.push(new NameItemComponent("Child # " + _this.incremental));
+        };
+        _this.addUneditable = function () {
+            _this.uneditableItems.push(new Uneditable("Sample when we had " + _this.nameItems.length + " child elements"));
         };
         return _this;
     }
@@ -402,11 +432,26 @@ var SampleComponent = (function (_super) {
             div({}, this.incremental.toString()),
             button({ onclick: this.increase }, "Increase!"),
             ul({}, this.renderComponents(this.nameItems)),
-            button({ onclick: this.addNumberedChild }, "Add Child")
+            ul({}, this.renderComponents(this.uneditableItems)),
+            button({ onclick: this.addNumberedChild }, "Add Child"),
+            button({ onclick: this.addUneditable }, "Add child count")
         ]);
     };
     return SampleComponent;
 }(TinyComponent));
+var Uneditable = (function (_super) {
+    __extends(Uneditable, _super);
+    function Uneditable(text) {
+        var _this = _super.call(this) || this;
+        _this.text = "";
+        _this.text = text;
+        return _this;
+    }
+    Uneditable.prototype.template = function () {
+        return li({}, this.text);
+    };
+    return Uneditable;
+}(OneTimeComponent));
 var node = document.createElement('div');
 document.body.appendChild(node);
 var sampleModel = new SampleComponent();
@@ -414,6 +459,7 @@ var root = new TinyRoot(sampleModel, node);
 
 exports.NameItemComponent = NameItemComponent;
 exports.SampleComponent = SampleComponent;
+exports.Uneditable = Uneditable;
 
 return exports;
 

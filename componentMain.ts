@@ -1,10 +1,10 @@
 import {a, div, button, input, select, option, h1, li, span, ul} from "./TinyTypeView/HtmlTypes"
 import {VirtualElement} from "./TinyTypeView/VirtualElement"
-import {TinyComponent} from "./TinyTypeView/TinyComponent"
+import {TinyComponent, OneTimeComponent} from "./TinyTypeView/TinyComponent"
 import { TinyRoot} from "./TinyTypeView/TinyRoot"
  import {DiffRenderer} from "./TinyTypeView/DiffRenderer"
 // import {OneTimeRenderer} from "./TinyTypeView/OneTimeRenderer"
-import { ComponentRenderer } from "./TinyTypeView/ComponentRenderer";
+// import { ComponentRenderer } from "./TinyTypeView/ComponentRenderer";
 
 
 export class NameItemComponent extends TinyComponent{
@@ -29,6 +29,7 @@ export class NameItemComponent extends TinyComponent{
 export class SampleComponent extends TinyComponent{
     incremental : number = 0;
     nameItems : NameItemComponent[] = [];
+    uneditableItems : Uneditable[] = [];
 
     increase = () => {
         this.incremental++;
@@ -36,17 +37,30 @@ export class SampleComponent extends TinyComponent{
     addNumberedChild = () => {
         this.nameItems.push(new NameItemComponent("Child # " + this.incremental))
     }
+    addUneditable = () => {
+        this.uneditableItems.push(new Uneditable(`Sample when we had ${this.nameItems.length} child elements`));
+    }
 
     public template() : VirtualElement {
         return div({}, [
                     div({}, this.incremental.toString()), 
                     button({onclick: this.increase}, "Increase!"),
                     ul({}, this.renderComponents(this.nameItems)),
-                    button({onclick: this.addNumberedChild}, "Add Child")
+                    ul({}, this.renderComponents(this.uneditableItems)),
+                    button({onclick: this.addNumberedChild}, "Add Child"),
+                    button({onclick: this.addUneditable}, "Add child count")
                 ]);
     }
-    
-
+}
+export class Uneditable extends OneTimeComponent{    
+    public text : string = "";
+    constructor(text : string){
+        super();
+        this.text = text;
+    }
+    public template() : VirtualElement {
+        return li({}, this.text);
+    }
 }
 
 var node = document.createElement('div');

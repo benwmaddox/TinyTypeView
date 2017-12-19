@@ -9,7 +9,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { div, button, li, span, ul } from "./TinyTypeView/HtmlTypes";
-import { TinyComponent } from "./TinyTypeView/TinyComponent";
+import { TinyComponent, OneTimeComponent } from "./TinyTypeView/TinyComponent";
 import { TinyRoot } from "./TinyTypeView/TinyRoot";
 var NameItemComponent = (function (_super) {
     __extends(NameItemComponent, _super);
@@ -37,11 +37,15 @@ var SampleComponent = (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.incremental = 0;
         _this.nameItems = [];
+        _this.uneditableItems = [];
         _this.increase = function () {
             _this.incremental++;
         };
         _this.addNumberedChild = function () {
             _this.nameItems.push(new NameItemComponent("Child # " + _this.incremental));
+        };
+        _this.addUneditable = function () {
+            _this.uneditableItems.push(new Uneditable("Sample when we had " + _this.nameItems.length + " child elements"));
         };
         return _this;
     }
@@ -50,12 +54,28 @@ var SampleComponent = (function (_super) {
             div({}, this.incremental.toString()),
             button({ onclick: this.increase }, "Increase!"),
             ul({}, this.renderComponents(this.nameItems)),
-            button({ onclick: this.addNumberedChild }, "Add Child")
+            ul({}, this.renderComponents(this.uneditableItems)),
+            button({ onclick: this.addNumberedChild }, "Add Child"),
+            button({ onclick: this.addUneditable }, "Add child count")
         ]);
     };
     return SampleComponent;
 }(TinyComponent));
 export { SampleComponent };
+var Uneditable = (function (_super) {
+    __extends(Uneditable, _super);
+    function Uneditable(text) {
+        var _this = _super.call(this) || this;
+        _this.text = "";
+        _this.text = text;
+        return _this;
+    }
+    Uneditable.prototype.template = function () {
+        return li({}, this.text);
+    };
+    return Uneditable;
+}(OneTimeComponent));
+export { Uneditable };
 var node = document.createElement('div');
 document.body.appendChild(node);
 var sampleModel = new SampleComponent();

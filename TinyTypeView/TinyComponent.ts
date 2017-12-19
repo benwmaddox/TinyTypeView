@@ -2,6 +2,7 @@ import {VirtualElement} from "./VirtualElement"
 import {ChangeWrapper} from "./ChangeWrapper"
 import { div } from "./HtmlTypes";
 
+
 export abstract class TinyComponent{
     constructor(){    
         this.propertyChanged = false;
@@ -16,7 +17,7 @@ export abstract class TinyComponent{
         }
     }
     public propertyChanged : boolean;
-    public virtualElement : VirtualElement |VirtualElement[]| null;
+    public virtualElement : VirtualElement | VirtualElement[] | null;
     public parent : TinyComponent | null;
 
     public renderComponents(components : TinyComponent[]): VirtualElement[] {
@@ -74,5 +75,20 @@ export abstract class TinyComponent{
             },
             ["propertyChanged", "childChanged", "virtualElement", "parent", "beforePropertyChange", "afterPropertyChange"]
         )
+    }
+}
+
+
+export abstract class OneTimeComponent extends TinyComponent {
+    public markPropertyChanged(){
+        // Don't mark self as changed.          
+        var parent = this.parent;
+        while (parent != null && parent.propertyChanged == false){
+            parent.propertyChanged = true;
+            parent = parent.parent;
+        }
+    }
+    public applyReactiveProperties(){
+        // Skip
     }
 }
