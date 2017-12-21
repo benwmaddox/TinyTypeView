@@ -1,8 +1,8 @@
 import {VirtualElement} from "./VirtualElement"
 
 export class DiffRenderer{
-    public eventListener : EventListener;
-    constructor( eventListener : EventListener) {
+    public eventListener? : EventListener;
+    constructor( eventListener? : EventListener) {
         this.eventListener = eventListener;        
     }
     public lastVirtualElement : VirtualElement | null = null;

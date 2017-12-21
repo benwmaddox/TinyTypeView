@@ -44,7 +44,8 @@ export abstract class Component{
     }
     public abstract template() : VirtualElement | VirtualElement[];    
    
-    public applyReactiveProperties() : void{
+    public applyReactiveProperties(changeCallback : () => void) : void{        
+        // var capturedCallback = changeCallback;
         var a = new ChangeWrapper(this, 
             (item : any, propName : string, value : any) : void => {
                 if (item[propName]  !== value){
@@ -52,8 +53,9 @@ export abstract class Component{
                     //     this.beforePropertyChange(propName, value);                   
                     // }
                     item.markPropertyChanged()
+                    changeCallback();
                     if (value instanceof Component) {
-                        value.applyReactiveProperties();
+                        value.applyReactiveProperties(changeCallback);
                         value.parent = item;
                     }
                     if (Array.isArray(value)){

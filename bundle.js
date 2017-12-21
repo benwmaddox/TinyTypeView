@@ -209,12 +209,13 @@ var Component = (function () {
         }
         return this.virtualElement;
     };
-    Component.prototype.applyReactiveProperties = function () {
+    Component.prototype.applyReactiveProperties = function (changeCallback) {
         var a = new ChangeWrapper(this, function (item, propName, value) {
             if (item[propName] !== value) {
                 item.markPropertyChanged();
+                changeCallback();
                 if (value instanceof Component) {
-                    value.applyReactiveProperties();
+                    value.applyReactiveProperties(changeCallback);
                     value.parent = item;
                 }
                 if (Array.isArray(value)) {
@@ -360,9 +361,9 @@ var Root = (function () {
         };
         this.runRender = function () {
             _this.renderPending = false;
-            _this.diffRenderer.Render(_this.boundElement, null, _this.render(), true);
+            _this.diffRenderer.Render(_this.boundElement, null, _this.templateRender(), true);
         };
-        this.render = function () {
+        this.templateRender = function () {
             var rendered = _this.component.render();
             if (rendered instanceof VirtualElement) {
                 return rendered;
@@ -373,8 +374,8 @@ var Root = (function () {
         };
         this.component = component;
         this.boundElement = boundElement;
-        this.diffRenderer = new DiffRenderer(this.prepareRender);
-        this.component.applyReactiveProperties();
+        this.diffRenderer = new DiffRenderer();
+        this.component.applyReactiveProperties(this.prepareRender);
         this.prepareRender();
     }
     return Root;
@@ -423,6 +424,7 @@ var SampleComponent = (function (_super) {
             _this.nameItems.push(new NameItemComponent("Child # " + _this.incremental));
         };
         _this.addUneditable = function () {
+            _this.incremental++;
             _this.uneditableItems.push(new Uneditable("Sample when we had " + _this.nameItems.length + " child elements"));
         };
         return _this;

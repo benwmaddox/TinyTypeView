@@ -45,6 +45,7 @@ var SampleComponent = (function (_super) {
             _this.nameItems.push(new NameItemComponent("Child # " + _this.incremental));
         };
         _this.addUneditable = function () {
+            _this.incremental++;
             _this.uneditableItems.push(new Uneditable("Sample when we had " + _this.nameItems.length + " child elements"));
         };
         return _this;

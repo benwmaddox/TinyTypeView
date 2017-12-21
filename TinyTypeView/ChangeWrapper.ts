@@ -99,20 +99,6 @@ export class ChangeWrapper<T>
             });
         // }
     }
-    // public wrapFunction = (instance : any, propName : string,  callback: (item: T, propName: string, value: any) => void) => 
-    // {
-    //     Object.defineProperty(instance, propName, {
-    //         get: function () {
-    //             return instance["___"+propName];
-    //         },
-    //         set: function (value) {
-    //             callback(instance, propName, value);
-    //             instance["___"+propName] = value;
-    //         },
-    //         enumerable: true,
-    //         configurable: true
-    //     });
-    // }
 }
 export class ArrayWrapper<T>{
 

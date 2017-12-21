@@ -13,9 +13,9 @@ var Root = (function () {
         };
         this.runRender = function () {
             _this.renderPending = false;
-            _this.diffRenderer.Render(_this.boundElement, null, _this.render(), true);
+            _this.diffRenderer.Render(_this.boundElement, null, _this.templateRender(), true);
         };
-        this.render = function () {
+        this.templateRender = function () {
             var rendered = _this.component.render();
             if (rendered instanceof VirtualElement) {
                 return rendered;
@@ -26,8 +26,8 @@ var Root = (function () {
         };
         this.component = component;
         this.boundElement = boundElement;
-        this.diffRenderer = new DiffRenderer(this.prepareRender);
-        this.component.applyReactiveProperties();
+        this.diffRenderer = new DiffRenderer();
+        this.component.applyReactiveProperties(this.prepareRender);
         this.prepareRender();
     }
     return Root;

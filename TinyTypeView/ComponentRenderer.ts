@@ -1,4 +1,4 @@
-import { Component } from "./TinyComponent";
+import { Component } from "./Component";
 import { VirtualElement } from "./VirtualElement";
 
 export class ComponentRenderer {

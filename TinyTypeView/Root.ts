@@ -13,8 +13,8 @@ export class Root {
     constructor(component : Component, boundElement : HTMLElement){
         this.component = component;       
         this.boundElement = boundElement;
-        this.diffRenderer = new DiffRenderer(this.prepareRender);
-        this.component.applyReactiveProperties(); 
+        this.diffRenderer = new DiffRenderer();
+        this.component.applyReactiveProperties(this.prepareRender); 
         this.prepareRender();
     }
     
@@ -27,10 +27,10 @@ export class Root {
 
     public runRender = () => {
         this.renderPending = false;
-        this.diffRenderer.Render(this.boundElement, null, this.render(), true)    
+        this.diffRenderer.Render(this.boundElement, null, this.templateRender(), true)    
     }
 
-    public render = () : VirtualElement  =>  {
+    public templateRender = () : VirtualElement  =>  {
         var rendered = this.component.render();
         if (rendered instanceof VirtualElement){
             return rendered;

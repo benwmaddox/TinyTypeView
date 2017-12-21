@@ -45,12 +45,13 @@ var Component = (function () {
         }
         return this.virtualElement;
     };
-    Component.prototype.applyReactiveProperties = function () {
+    Component.prototype.applyReactiveProperties = function (changeCallback) {
         var a = new ChangeWrapper(this, function (item, propName, value) {
             if (item[propName] !== value) {
                 item.markPropertyChanged();
+                changeCallback();
                 if (value instanceof Component) {
-                    value.applyReactiveProperties();
+                    value.applyReactiveProperties(changeCallback);
                     value.parent = item;
                 }
                 if (Array.isArray(value)) {

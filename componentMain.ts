@@ -38,6 +38,7 @@ export class SampleComponent extends Component{
         this.nameItems.push(new NameItemComponent("Child # " + this.incremental))
     }
     addUneditable = () => {
+        this.incremental++;
         this.uneditableItems.push(new Uneditable(`Sample when we had ${this.nameItems.length} child elements`));
     }
 
