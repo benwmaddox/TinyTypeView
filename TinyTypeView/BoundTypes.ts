@@ -12,13 +12,58 @@ export function boundSelect<T, K extends keyof T>(SelectedIndexField: K, attribu
 
     return select(attributes,children.map((m,i)=> childRenderFunction(m, false)) );
 }
-export function boundInput<T extends Component, K extends keyof T>(source : T, SelectedIndexField: K, attributes: Attribute<HTMLInputElement> ) : VirtualElement {
+
+export function boundInput<T extends Component, K extends keyof T>(source : T, SelectedIndexField: K, attributes: Attribute<HTMLInputElement>, convertToField? : (a : string) => typeof source[K] , convertToDOM?: (a : typeof source[K] ) => string) : VirtualElement {
     
     function setFieldFromEvent (this: HTMLElement, ev: Event) : any {    
-        source[SelectedIndexField] = (<HTMLInputElement>ev.target).value;  
+        if (convertToField){
+            source[SelectedIndexField] = convertToField((<HTMLInputElement>ev.target).value);  
+        }
+        else {
+            source[SelectedIndexField] = (<HTMLInputElement>ev.target).value;  
+        }
     }
-    attributes.oninput = setFieldFromEvent;
-    attributes.value = source[SelectedIndexField] 
+    
+    attributes.oninput = setFieldFromEvent;    
+    if (convertToDOM){
+        attributes.value = convertToDOM(source[SelectedIndexField]); 
+    }
+    else{
+        attributes.value = source[SelectedIndexField];
+    }
+    return input(
+             attributes
+        );   
+}
+
+
+export function textInput<T extends Component, K extends keyof T>(source : T, SelectedIndexField: K, attributes?: Attribute<HTMLInputElement>) : VirtualElement {
+    
+    function setFieldFromEvent (this: HTMLElement, ev: Event) : any {    
+        source[SelectedIndexField] = (<HTMLInputElement>ev.target).value;
+    }    
+    if (attributes == null){
+        attributes = {};
+    }
+    attributes.oninput = setFieldFromEvent;    
+    attributes.value = source[SelectedIndexField];
+    return input(
+             attributes
+        );   
+}
+
+
+export function numberInput<T extends Component, K extends keyof T>(source : T, SelectedIndexField: K, attributes?: Attribute<HTMLInputElement>) : VirtualElement {
+    
+    function setFieldFromEvent (this: HTMLElement, ev: Event) : any {    
+        source[SelectedIndexField] = Number((<HTMLInputElement>ev.target).value);
+    }
+    if (attributes == null){
+        attributes = {};
+    }
+    attributes.type = "number";
+    attributes.oninput = setFieldFromEvent;    
+    attributes.value = source[SelectedIndexField];
     return input(
              attributes
         );   

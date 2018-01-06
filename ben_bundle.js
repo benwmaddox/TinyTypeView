@@ -345,10 +345,14 @@ var Root = (function () {
     return Root;
 }());
 
-function boundInput(source$$1, SelectedIndexField, attributes) {
+function numberInput(source$$1, SelectedIndexField, attributes) {
     function setFieldFromEvent(ev) {
-        source$$1[SelectedIndexField] = ev.target.value;
+        source$$1[SelectedIndexField] = Number(ev.target.value);
     }
+    if (attributes == null) {
+        attributes = {};
+    }
+    attributes.type = "number";
     attributes.oninput = setFieldFromEvent;
     attributes.value = source$$1[SelectedIndexField];
     return input(attributes);
@@ -372,33 +376,36 @@ var WebsiteInvesting = (function (_super) {
         _this.valuePerHour = 50;
         _this.siteCost = 1;
         _this.netIncomePerMonth = 1;
-        _this.netIncomePerYear = function () {
-            return _this.netIncomePerMonth * 12;
-        };
         _this.breakEvenYears = function () {
             return _this.siteCost / (_this.netIncomePerMonth - (_this.hoursPerMonth * _this.valuePerHour));
+        };
+        _this.ROIAnually = function () {
+            return _this.netIncomePerMonth - (_this.hoursPerMonth * _this.valuePerHour);
         };
         _this.ROIOnCashAnually = function () {
             return (_this.netIncomePerMonth - (_this.hoursPerMonth * _this.valuePerHour)) / _this.siteCost;
         };
         return _this;
     }
+    WebsiteInvesting.prototype.stringToNumberConverter = function (value) {
+        return Number(value);
+    };
     WebsiteInvesting.prototype.template = function () {
         return div({}, [
             h1({}, "Website Investing"),
             div({}, "I wanted to use a few values to see if I should purchase another person's website and run it."),
             div({}, "Hours Per Month"),
-            boundInput(this, 'hoursPerMonth', { type: "number" }),
+            numberInput(this, 'hoursPerMonth'),
             div({}, "Value Per Hour"),
-            boundInput(this, 'valuePerHour', { type: "number" }),
+            numberInput(this, 'valuePerHour'),
             div({}, "Site Cost"),
-            boundInput(this, 'siteCost', { type: "number" }),
+            numberInput(this, 'siteCost'),
             div({}, "Net Income Per Month"),
-            boundInput(this, 'netIncomePerMonth', { type: "number" }),
+            numberInput(this, 'netIncomePerMonth'),
             h1({}, "Results"),
-            div({}, "Net Income Per Year: " + this.netIncomePerYear()),
             div({}, "Break Even Years: " + this.breakEvenYears()),
-            div({}, "ROI On Cash Annually: " + this.ROIOnCashAnually())
+            div({ className: this.ROIAnually() < 0 ? "warning" : "" }, "ROI Annually: " + this.ROIOnCashAnually()),
+            div({ className: this.ROIOnCashAnually() < 0 ? "warning" : "" }, "ROI On Cash Annually: $" + this.ROIAnually())
         ]);
     };
     return WebsiteInvesting;
@@ -410,7 +417,7 @@ var BenToolsComponent = (function (_super) {
         _this.ToolOptions = [];
         _this.SelectedTool = null;
         _this.renderToolOptions = function () {
-            return div({}, _this.ToolOptions.map(function (item, index) { return button({ onclick: function () { return _this.selectTool(item); } }, "Item " + index); }));
+            return div({}, _this.ToolOptions.map(function (item, index) { return button({ onclick: function () { return _this.selectTool(item.component); } }, item.name); }));
         };
         _this.selectTool = function (item) {
             _this.SelectedTool = item;
@@ -425,11 +432,12 @@ var BenToolsComponent = (function (_super) {
     };
     return BenToolsComponent;
 }(Component));
-var node = document.createElement('div');
-document.body.appendChild(node);
 var toolsModel = new BenToolsComponent();
-var root = new Root(toolsModel, node);
-toolsModel.SelectedTool = new WebsiteInvesting();
-toolsModel.ToolOptions.push(toolsModel.SelectedTool);
+var root = new Root(toolsModel, document.body);
+var webInvesting = new WebsiteInvesting();
+toolsModel.ToolOptions.push({
+    name: "Web Investing",
+    component: webInvesting
+});
 
 }());
