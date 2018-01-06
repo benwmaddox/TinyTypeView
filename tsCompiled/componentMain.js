@@ -57,7 +57,8 @@ var SampleComponent = (function (_super) {
             ul({}, this.renderComponents(this.nameItems)),
             ul({}, this.renderComponents(this.uneditableItems)),
             button({ onclick: this.addNumberedChild }, "Add Child"),
-            button({ onclick: this.addUneditable }, "Add child count")
+            button({ onclick: this.addUneditable }, "Add child count"),
+            div({ role: "presentation" })
         ]);
     };
     return SampleComponent;

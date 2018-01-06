@@ -17,8 +17,13 @@ export function v (elementTag : keyof ElementTagNameMap, attributes?: any | null
   return new VirtualElement(elementTag, attributes, children);
 };
 
-export type Attribute<T extends HTMLElement> = {    
-    [P in keyof T]?: T[P];
+declare global{
+    export interface HTMLElement{
+        role: string
+    }
+}
+export type Attribute<T extends HTMLElement > = {    
+    [P in keyof T]?: T[P] ;
 }
 //TODO: add behavior for *-* attributes 
 

@@ -35,7 +35,7 @@ export class SampleComponent extends Component{
         this.incremental++;
     }
     addNumberedChild = () => {
-        this.nameItems.push(new NameItemComponent("Child # " + this.incremental))
+        this.nameItems.push(new NameItemComponent(`Child # ${this.incremental}`))
     }
     addUneditable = () => {
         this.incremental++;
@@ -49,7 +49,8 @@ export class SampleComponent extends Component{
                     ul({}, this.renderComponents(this.nameItems)),
                     ul({}, this.renderComponents(this.uneditableItems)),
                     button({onclick: this.addNumberedChild}, "Add Child"),
-                    button({onclick: this.addUneditable}, "Add child count")
+                    button({onclick: this.addUneditable}, "Add child count"),
+                    div({role: "presentation" })
                 ]);
     }
 }
