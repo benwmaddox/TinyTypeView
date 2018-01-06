@@ -1,4 +1,13 @@
-import { select } from "./HtmlTypes";
+import { select, input } from "./HtmlTypes";
 export function boundSelect(SelectedIndexField, attributes, childRenderFunction, children) {
     return select(attributes, children.map(function (m, i) { return childRenderFunction(m, false); }));
+}
+export function boundInput(source, SelectedIndexField, attributes) {
+    function setFieldFromEvent(ev) {
+        source[SelectedIndexField] = ev.target.value;
+    }
+    return input({
+        oninput: setFieldFromEvent,
+        value: source[SelectedIndexField]
+    });
 }

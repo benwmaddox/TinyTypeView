@@ -20,10 +20,13 @@ export abstract class Component{
     public virtualElement : VirtualElement | VirtualElement[] | null;
     public parent : Component | null;
 
-    public renderComponents(components : Component[]): VirtualElement[] {
+    public renderComponents(components : (Component|null)[]): VirtualElement[] {
         var results : VirtualElement[] = [];
         for (var i = 0; i < components.length; i++) {
-            var render = components[i].render();
+            if (components[i] == null){
+                continue;
+            }
+            var render = (<Component>components[i]).render();
             if (render instanceof VirtualElement){
                 results.push(render);
             }

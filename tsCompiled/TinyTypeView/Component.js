@@ -26,6 +26,9 @@ var Component = (function () {
     Component.prototype.renderComponents = function (components) {
         var results = [];
         for (var i = 0; i < components.length; i++) {
+            if (components[i] == null) {
+                continue;
+            }
             var render = components[i].render();
             if (render instanceof VirtualElement) {
                 results.push(render);

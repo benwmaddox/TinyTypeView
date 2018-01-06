@@ -53,6 +53,7 @@
   },
   "files": [
     "main.ts",
-    "componentMain.ts"
+    "componentMain.ts",
+    "BenTools.ts"
   ]
 }

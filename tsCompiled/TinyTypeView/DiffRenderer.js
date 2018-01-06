@@ -25,6 +25,9 @@ var DiffRenderer = (function () {
                 for (var i = 0; i < max; i++) {
                     var element = ve.children.length > i ? ve.children[i] : null;
                     var oldElement = oldVe != null && oldVe.children != null && oldVe.children.length > i ? oldVe.children[i] : null;
+                    if (element === null) {
+                        continue;
+                    }
                     if (element instanceof VirtualElement) {
                         if (oldElement === null && element) {
                             var $elChild = document.createElement(element.elementTag);

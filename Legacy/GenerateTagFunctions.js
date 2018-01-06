@@ -87,6 +87,6 @@ var map = {
 }
 
 for (key in map){
- console.log("export function " +key+ "(attributes?: Attribute<" + map[key] + "> | null , children?: VirtualElement[] | null | string ){ return new VirtualElement(\""+key+"\", attributes, children);}")
+ console.log("export function " +key+ "(attributes?: Attribute<" + map[key] + "> | null , children?: (VirtualElement| null)[] | null | string ){ return new VirtualElement(\""+key+"\", attributes, children);}")
 }
 

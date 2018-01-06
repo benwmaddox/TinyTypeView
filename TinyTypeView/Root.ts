@@ -11,7 +11,7 @@ export class Root {
     private renderPending = false;
 
     constructor(component : Component, boundElement : HTMLElement){
-        this.component = component;       
+        this.component = component;  
         this.boundElement = boundElement;
         this.diffRenderer = new DiffRenderer();
         this.component.applyReactiveProperties(this.prepareRender); 

@@ -1,10 +1,10 @@
 export class VirtualElement{
     public elementTag :  keyof ElementTagNameMap;
     public attributes?: any | null;
-    public children?:VirtualElement[] | string | null;
+    public children?:(VirtualElement | null)[] | string | null;
     public element : HTMLElement | null; // Should only be used during rendering
 
-    constructor(elementTag : keyof ElementTagNameMap, attributes?: any | null , children?: VirtualElement[] | null | string ) { //| VirtualElement
+    constructor(elementTag : keyof ElementTagNameMap, attributes?: any | null , children?: (VirtualElement | null)[] | null | string ) { //| VirtualElement
         this.elementTag = elementTag;
         this.attributes = attributes;
         this.children = children;    
@@ -13,7 +13,7 @@ export class VirtualElement{
 
 }
 
-export function v (elementTag : keyof ElementTagNameMap, attributes?: any | null , children?: VirtualElement[] | null | string) : VirtualElement { 
+export function v (elementTag : keyof ElementTagNameMap, attributes?: any | null , children?: (VirtualElement | null )[] | null | string) : VirtualElement { 
   return new VirtualElement(elementTag, attributes, children);
 };
 

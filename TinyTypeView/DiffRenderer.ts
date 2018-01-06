@@ -26,7 +26,9 @@ export class DiffRenderer{
                 for (var i = 0; i < max; i++) {
                     let element = ve.children.length > i ? ve.children[i] : null;     
                     let oldElement = oldVe != null && oldVe.children != null && oldVe.children.length > i ? oldVe.children[i] : null;
-                    
+                    if (element === null){
+                        continue;
+                    }
                     if (element instanceof VirtualElement ) {             
                         
                         if (oldElement === null && element){
