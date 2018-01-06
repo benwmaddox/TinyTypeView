@@ -23,7 +23,7 @@ declare global{
     }
 }
 export type Attribute<T extends HTMLElement > = {    
-    [P in keyof T]?: T[P] ;
+    [P in keyof T]?: T[P];
 }
 //TODO: add behavior for *-* attributes 
 

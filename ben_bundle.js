@@ -349,10 +349,9 @@ function boundInput(source$$1, SelectedIndexField, attributes) {
     function setFieldFromEvent(ev) {
         source$$1[SelectedIndexField] = ev.target.value;
     }
-    return input({
-        oninput: setFieldFromEvent,
-        value: source$$1[SelectedIndexField]
-    });
+    attributes.oninput = setFieldFromEvent;
+    attributes.value = source$$1[SelectedIndexField];
+    return input(attributes);
 }
 
 var __extends = (undefined && undefined.__extends) || (function () {

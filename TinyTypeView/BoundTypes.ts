@@ -1,5 +1,5 @@
 import {select, input} from "./HtmlTypes"
-import {Attribute, VirtualElement} from "./VirtualElement"
+import {Attribute, VirtualElement, v} from "./VirtualElement"
 import { Component } from "./Component";
 
 export function boundSelect<T, K extends keyof T>(SelectedIndexField: K, attributes: Attribute<HTMLSelectElement> | null, childRenderFunction: (item:T, selected: boolean) => VirtualElement, children: T[]) : VirtualElement {
@@ -12,15 +12,14 @@ export function boundSelect<T, K extends keyof T>(SelectedIndexField: K, attribu
 
     return select(attributes,children.map((m,i)=> childRenderFunction(m, false)) );
 }
-export function boundInput<T extends Component, K extends keyof T>(source : T, SelectedIndexField: K, attributes: Attribute<HTMLSelectElement> | null) : VirtualElement {
+export function boundInput<T extends Component, K extends keyof T>(source : T, SelectedIndexField: K, attributes: Attribute<HTMLInputElement> ) : VirtualElement {
     
     function setFieldFromEvent (this: HTMLElement, ev: Event) : any {    
         source[SelectedIndexField] = (<HTMLInputElement>ev.target).value;  
     }
+    attributes.oninput = setFieldFromEvent;
+    attributes.value = source[SelectedIndexField] 
     return input(
-            { 
-                oninput: setFieldFromEvent,
-                value: source[SelectedIndexField] 
-            }
+             attributes
         );   
 }

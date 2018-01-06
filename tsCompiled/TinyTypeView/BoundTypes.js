@@ -6,8 +6,7 @@ export function boundInput(source, SelectedIndexField, attributes) {
     function setFieldFromEvent(ev) {
         source[SelectedIndexField] = ev.target.value;
     }
-    return input({
-        oninput: setFieldFromEvent,
-        value: source[SelectedIndexField]
-    });
+    attributes.oninput = setFieldFromEvent;
+    attributes.value = source[SelectedIndexField];
+    return input(attributes);
 }
